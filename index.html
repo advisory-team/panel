@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equity Gaming - Personnel Application</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4f5f9;--card:#fff;--tx:#1b1d2a;--mu:#666b80;--ac:#5b5bd6;--bd:#dcdfe9;--ok:#1e8e5a;--er:#c63c3c}
+@media (prefers-color-scheme:dark){:root{--bg:#12131a;--card:#1c1e29;--tx:#eceef7;--mu:#9aa0b8;--ac:#8b8bff;--bd:#2f3243;--ok:#4cc38a;--er:#ff7b7b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 12px;color:var(--ac)}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.q{margin-bottom:16px}.l{display:block;font-weight:600;margin-bottom:6px}.req{color:var(--er)}
+input[type=text],input[type=email],input[type=password],textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;margin-bottom:8px}
+textarea{min-height:90px;resize:vertical}
+.o{display:block;margin:4px 0;cursor:pointer;font-weight:400}
+button{font:inherit;cursor:pointer;border-radius:8px}
+.p{background:var(--ac);color:#fff;border:0;padding:11px 22px}
+.s{background:none;border:1px solid var(--bd);color:var(--tx);padding:6px 12px}
+.mu{color:var(--mu);font-size:14px}.er{color:var(--er)}.ok{color:var(--ok)}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);cursor:pointer;flex-wrap:wrap}
+.ans{white-space:pre-wrap;background:var(--bg);padding:8px 10px;border-radius:8px;margin:4px 0 12px}
+.hide{display:none}
+</style></head><body><div class="w">
+<header><h1>Equity Gaming &middot; Personnel Application</h1></header>
+<div class="c mu">Answer honestly, in English or Tagalog. Use your own words. Fields marked <span class="req">*</span> are required.</div>
+<div id="form"></div>
+<div id="msg" class="c hide"></div>
+<button class="p" id="sub">Submit application</button>
+</div>
+<script>
+// ====== CONFIG: paste your Supabase values ======
+var SUPABASE_URL="PASTE_PROJECT_URL";
+var SUPABASE_ANON_KEY="PASTE_ANON_PUBLIC_KEY";
+// =================================================
+var sb=null;try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(e){}
+var $=function(i){return document.getElementById(i)};
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+var S=[
+{s:"Instructions",i:[{id:"agree",l:"Do you understand and are you ready to follow the instructions?",t:"radio",o:["Yes!!"]}]},
+{s:"Basic Information",i:[
+{id:"ign",l:"Ingame Name (Present or Previous IGN)",t:"text"},
+{id:"discord",l:"Discord Username",t:"text"},
+{id:"intro",l:"Introduce yourself briefly.",t:"area"},
+{id:"years",l:"How long have you been part of Equity Gaming/COMRP? (Specify the year if available.)",t:"text"},
+{id:"prev",l:"Have you previously held any staff position here in Equity Gaming? (Specify it if available, put N/A if no.)",t:"text"},
+{id:"other",l:"Do you have any experience of being a staff in other server? (Specify it, if yes.)",t:"text",opt:1},
+{id:"status",l:"Are you applying as a new applicant or reinstated?",t:"radio",o:["New applicant","Reinstate"]},
+{id:"pos",l:"What position are you applying for?",t:"radio",o:["Advisory Team","Special Event Committee","Multimedia Team","Server Moderators"]}]},
+{s:"Understanding the Position",i:[
+{id:"duties",l:"Explain what the duties and responsibilities of the position you're applying for are.",t:"area"},
+{id:"contrib",l:"What can you contribute to our server that will help it to grow?",t:"area"},
+{id:"virtues",l:"In your own opinion, what are the 3 most important virtues that one's personnel should have?",t:"area"}]},
+{s:"Situational Questions",i:[
+{id:"sit1",l:"You witness another Administrator abusing their authority. What would you do, especially if that Administrator is someone you are close with?",t:"area"},
+{id:"sit2",l:"A player becomes disrespectful and starts insulting you while you are handling their report against you. How would you respond?",t:"area"}]},
+{s:"Commitments",i:[
+{id:"time",l:"How much time are you realistically willing and able to dedicate to your server's responsibilities?",t:"text"},
+{id:"life",l:"What would you do if your personal responsibilities or real-life situation started affecting your activity as an Equity Gaming staff?",t:"area"},
+{id:"reject",l:"If you are not selected this time, how would you react and what would you do to move forward?",t:"area"},
+{id:"extra",l:"Is there anything else you would like the Administration Team to know about you that was not covered by the questions above?",t:"area"}]}];
+var ALL=[];S.forEach(function(s){s.i.forEach(function(q){ALL.push(q)})});
+var h="";S.forEach(function(s){h+='<div class="c"><h2>'+esc(s.s)+'</h2>';s.i.forEach(function(q){
+h+='<div class="q"><label class="l">'+esc(q.l)+(q.opt?"":' <span class="req">*</span>')+'</label>';
+if(q.t=="text")h+='<input type="text" id="f_'+q.id+'" maxlength="300">';
+else if(q.t=="area")h+='<textarea id="f_'+q.id+'" maxlength="3000"></textarea>';
+else q.o.forEach(function(o){h+='<label class="o"><input type="radio" name="f_'+q.id+'" value="'+esc(o)+'"> '+esc(o)+'</label>'});
+h+='</div>'});h+='</div>'});
+$("form").innerHTML=h;
+
+function val(q){if(q.t=="radio"){var r=document.querySelector('input[name="f_'+q.id+'"]:checked');return r?r.value:""}return $("f_"+q.id).value.trim()}
+function show(m,c){var e=$("msg");e.className="c "+c;e.innerHTML=m;e.scrollIntoView({behavior:"smooth",block:"center"})}
+
+$("sub").onclick=async function(){
+ var a={},miss=null;
+ ALL.forEach(function(q){a[q.id]=val(q);if(!a[q.id]&&!q.opt&&!miss)miss=q});
+ if(miss){show("Please answer: "+esc(miss.l),"er");return}
+ if(!sb){show("Site is not set up yet (Supabase keys missing).","er");return}
+ $("sub").disabled=true;
+ var r=await sb.from("applications").insert({answers:a});
+ if(r.error){$("sub").disabled=false;show("Could not submit. Please try again. ("+esc(r.error.message)+")","er");return}
+ show("<b class='ok'>Application submitted.</b> Thank you. The Administration Team will review it.","");
+ $("sub").classList.add("hide");
+};
+
+</script></body></html>
