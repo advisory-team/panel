@@ -3330,13 +3330,23 @@ function saveMe(a, b) {
 }
 async function checkLoaRosterMember(ign) {
     if (!sb) return { ok: false, error: "Can't reach the server. Try again later." };
-    // Only an IGN that currently exists in the Advisory Team roster may file an LOA.
-    // Capitalization differences are ignored when matching the roster.
+    // Match roster names flexibly: ignore capitalization, treat underscores as spaces,
+    // collapse repeated spaces, and allow a first-name-only submission when that
+    // first name belongs to a current roster member.
     var res = await sb.from("roster").select("ign");
     if (res.error) return { ok: false, error: "We couldn't verify the Advisory Team roster right now. Please try again later." };
-    var wanted = (ign || "").trim().toLowerCase();
+    var normalize = function(value) {
+        return String(value || "").replace(/_/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    };
+    var wanted = normalize(ign);
+    var wantedFirst = wanted.split(" ")[0];
+    if (!wantedFirst) return { ok: false };
     var member = (res.data || []).some(function(m) {
-        return (m.ign || "").trim().toLowerCase() === wanted;
+        var rosterName = normalize(m.ign);
+        if (!rosterName) return false;
+        if (rosterName === wanted) return true;
+        var rosterFirst = rosterName.split(" ")[0];
+        return rosterFirst === wantedFirst;
     });
     return { ok: member };
 }
@@ -3383,7 +3393,7 @@ $("lf").addEventListener("submit", async function(ev) {
         resetLoa(); $("loa-note").hidden = false; $("ldone").hidden = true; $("lf").hidden = false; window.scrollTo(0, 0)
     };
 });
-/* ---------- Announcements, roster updates, site settings (public) ---------- */
+/* Announcements, roster updates, site settings (public) */
 var UT = {
     promotion: "Promotion",
     demotion: "Demotion",
@@ -3461,7 +3471,7 @@ async function loadNews() {
     $("rulist").innerHTML = '<div class="ru"><span class="d">Roster updates are unavailable right now.</span></div>';
 }
 }
-/* ---------- Application status checker ---------- */
+/* Application status checker  */
 try {
     var lr = localStorage.getItem(REF_KEY);
     if (lr) $("st_ref").value = lr
@@ -3484,7 +3494,7 @@ $("stf").addEventListener("submit", async function(e) {
     }
     [d.status] || d.status; box.innerHTML = '<h2 style="margin:0 0 6px">' + esc(lab) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' \u00b7 submitted ' + esc(fmt(d.submitted)): '') + '</div>' + (d.note ? '<p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(d.note) + '</p>': '');
 });
-/* ---------- Mobile menu ---------- */
+/* Mobile menu */
 $("burger").onclick = function(e) {
     e.stopPropagation();
     var m = $("mmenu"),
@@ -3567,7 +3577,7 @@ $("sr").addEventListener("click", function(e) {
 document.addEventListener("click", function(e) {
     if (!e.target.closest("#sx")) $("sr").hidden = true
 });
-/* ---------- Simple view router (#apply = form, #loa = leave of absence, secret hash = admin, anything else = landing) ---------- */
+
 function route() {
     var h = location.hash,
     isApply = h === "#apply",
@@ -3597,7 +3607,7 @@ function route() {
     }
 }
 window.addEventListener("hashchange", route);
-/* ---------- Init ---------- */
+
 resetLoa();
 loadMe();
 var startStep = loadDraft();
