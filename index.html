@@ -1547,6 +1547,61 @@ input:disabled {
 
 <!-- ADMIN  -->
 <div id="adm" hidden></div>
+<style id="knowledge-test-public-style">
+#kt_public_form {
+    margin-top: 18px;
+}
+#kt_public_form label.q {
+    display: block;
+    margin-top: 20px;
+}
+#kt_public_form label.q b {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 17px;
+    line-height: 1.45;
+}
+#kt_public_form textarea {
+    width: 100%;
+    min-height: 150px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+#kt_submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 22px !important;
+    padding: 13px 20px;
+    border: 1px solid rgba(38, 212, 230, .45);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #18b9ca, #26d4e6);
+    color: #061016;
+    font: inherit;
+    font-weight: 750;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(38, 212, 230, .14);
+    transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+}
+#kt_submit:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(38, 212, 230, .2);
+}
+#kt_submit:active {
+    transform: translateY(0);
+}
+#kt_submit:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+}
+</style>
+
 <template id="adm-tpl">
 <style>
 :host {
@@ -2801,7 +2856,7 @@ const saveCfg = () => {
     }, light: {
         bg: "#eef1f7", sb: "#ffffff", card: "#ffffff", bd: "#dfe3ec", tx: "#1b1d2a", mu: "#5d6478", in: "#f6f7fa", chip: "#e9ecf3"
     }
-}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], isHead = true, editA = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
+}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], ktests = [], isHead = true, editA = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
     var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
 }
 const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => !l.end_date || l.end_date >= today(); const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
@@ -2841,24 +2896,54 @@ async function check() {
 }
 //  data
 async function load() {
-    var q = await Promise.all([sb.from("applications").select("*").order("created_at", {
-        ascending: false
-    }), sb.from("comments").select("*").order("created_at"), sb.from("loa").select("*").order("start_date", {
-        ascending: false
-    }), sb.from("roster").select("*").order("created_at"), sb.from("infractions").select("*").order("created_at", {
-        ascending: false
-    }), sb.from("announcements").select("*").order("created_at", {
-        ascending: false
-    }), sb.from("roster_updates").select("*").order("effective_on", {
-        ascending: false
-    }).order("created_at", {
-        ascending: false
-    }), sb.from("site_settings").select("*"), sb.from("audit_log").select("*").order("created_at", {
-        ascending: false
-    }).limit(100)]); var e = q.find(x => x.error); msg = e ? e.error.message + " (did you run the new SQL in Supabase?)": ""; rows = q[0].data || []; cm = q[1].data || []; loa = q[2].data || []; ros = q[3].data || []; inf = q[4].data || []; ann = q[5].data || []; rup = q[6].data || []; site = {
-}; (q[7].data || []).forEach(x => {
-    site[x.key] = x.value
-}); aud = q[8].data || []; render();
+    var q = await Promise.all([
+        sb.from("applications").select("*").order("created_at", {
+            ascending: false
+        }),
+        sb.from("comments").select("*").order("created_at"),
+        sb.from("loa").select("*").order("start_date", {
+            ascending: false
+        }),
+        sb.from("roster").select("*").order("created_at"),
+        sb.from("infractions").select("*").order("created_at", {
+            ascending: false
+        }),
+        sb.from("announcements").select("*").order("created_at", {
+            ascending: false
+        }),
+        sb.from("roster_updates").select("*").order("effective_on", {
+            ascending: false
+        }).order("created_at", {
+            ascending: false
+        }),
+        sb.from("knowledge_tests").select("*").order("created_at", {
+            ascending: false
+        }),
+        sb.from("site_settings").select("*"),
+        sb.from("audit_log").select("*").order("created_at", {
+            ascending: false
+        }).limit(100)
+    ]);
+
+    var e = q.find(x => x.error);
+    msg = e ? e.error.message + " (did you run the knowledge test SQL in Supabase?)" : "";
+
+    rows = q[0].data || [];
+    cm = q[1].data || [];
+    loa = q[2].data || [];
+    ros = q[3].data || [];
+    inf = q[4].data || [];
+    ann = q[5].data || [];
+    rup = q[6].data || [];
+    ktests = q[7].data || [];
+
+    site = {};
+    (q[8].data || []).forEach(x => {
+        site[x.key] = x.value
+    });
+
+    aud = q[9].data || [];
+    render();
 }
 // render 
 function navHtml() {
@@ -2872,11 +2957,7 @@ function pills() {
 }
 function appCard(r) {
     var a=r.answers||{},st=stOf(r),n=cm.filter(c=>c.application_id==r.id).length;
-    var acts=st=="pending"
-        ? `<button class="p" data-act="open" data-id="${r.id}">Review</button><button class="s" data-act="setst" data-id="${r.id}" data-v="accepted">Accept</button><button class="s" data-act="setst" data-id="${r.id}" data-v="rejected">Not selected</button>`
-        : st=="accepted"
-        ? `<button class="p" data-act="open" data-id="${r.id}">View application</button><button class="s" data-act="toroster" data-id="${r.id}">+ Add to roster</button>`
-        : `<button class="p" data-act="open" data-id="${r.id}">Open review</button><button class="s" data-act="setst" data-id="${r.id}" data-v="accepted">Accept</button><button class="s" data-act="setst" data-id="${r.id}" data-v="rejected">Not selected</button>`;
+    var acts = `<button class="p" data-act="open" data-id="${r.id}">${st == "accepted" ? "View application" : "Review application"}</button>`;
     return `<article class="app-row s-${st}" data-act="open" data-id="${r.id}">
         <div class="app-main"><div class="app-avatar app-avatar-user" aria-hidden="true">${ic("user",22)}</div><div style="min-width:0"><div class="app-name">${esc(a.ign||"Unknown applicant")}</div><div class="app-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}${n?` &bull; ${n} comment${n>1?"s":""}`:""}</div></div></div>
         <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(st))}</div></div>
@@ -2898,17 +2979,138 @@ function vApps() {
     var f = rows.filter(r => filt == "all" || stOf(r) == filt);
     return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
 }
-function vDetail() {
-    var r = rows.find(x => x.id == cur); if (!r) {
-        cur = null; return vApps()
-    }
-    var a = r.answers || {
-}, st = stOf(r), cs = cm.filter(c => c.application_id == r.id); return `<button class="s" data-act="back">&larr; Back</button><div class="card s-${st}" style="margin-top:12px"><h1>${esc(a.ign)} <span class="tg">${st}</span></h1>
- <div class="mu">${esc(a.discord)} &middot; submitted ${esc(fmt(r.created_at))}</div>
- <div class="bar"><button class="s ${st=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button><button class="s ${st=="accepted"?"on":""}" data-act="status" data-v="accepted">Accepted</button><button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button><button class="s" data-act="toroster">+ Add to roster</button><button class="ab dl" data-act="delapp" title="Delete application">${ic("trash",15)}Delete</button></div></div>
- <div class="dg"><div><div class="card"><h2>Answers</h2>${ALL.map(q=>`<div><b>${esc(q.l)}</b><div class="ans">${esc(a[q.id]||"-")}</div></div>`).join("")}</div></div><div class="st"><div class="card"><h2>Applicant status</h2><div class="mu" style="margin-bottom:8px">Reference: ${esc(r.ref||"-")}</div><textarea id="dn" placeholder="Optional message the applicant sees on the status page">${esc(r.decision_note||"")}</textarea><button class="p" data-act="savenote">Save message</button></div><div class="card"><h2>Comments (${cs.length})</h2>${cs.map(c=>`<div class="cm"><div class="mu cmh"><span>${esc(c.author)} &middot; ${esc(fmt(c.created_at))}</span><button class="ab dl sm" data-act="delcm" data-id="${c.id}" title="Delete comment">${ic("trash",14)}</button></div>${esc(c.body)}</div>`).join("")||`<p class="mu">No comments yet.</p>`}
- <textarea id="cb" placeholder="Write a comment (only logged-in admins can see it)"></textarea><button class="p" data-act="post">Post comment</button></div></div></div>`;
+function knowledgeTestFor(appId) {
+    return ktests.find(x => String(x.application_id) == String(appId)) || null
 }
+
+var KNOWLEDGE_TEST_QUESTIONS = [
+    "How to verify po",
+    "How to redeem and what is the freebies.",
+    "Best Jobs?",
+    "Para saan po itong scraps?",
+    "Para po maglagay ng gamit sa car",
+    "pano po makita mga perks ng vip?",
+    "Saan po located yung Miner or jobs?",
+    "Paano ibalik sa inventory yung mga weapon?",
+    "Pano po mag pa level up?"
+];
+
+function knowledgeTestState(t) {
+    if (!t) return "not_sent";
+    return t.status == "submitted" ? "submitted" : "sent";
+}
+
+function knowledgeTestQuestions(t) {
+    if (t && Array.isArray(t.questions) && t.questions.length) return t.questions;
+    return KNOWLEDGE_TEST_QUESTIONS;
+}
+
+function knowledgeTestCard(r) {
+    var t = knowledgeTestFor(r.id);
+    var state = knowledgeTestState(t);
+    var qs = knowledgeTestQuestions(t);
+
+    if (state == "not_sent") {
+        return `<div class="card" style="margin-bottom:16px">
+            <div class="qh" style="margin:0">
+                <div>
+                    <h2 style="margin-bottom:4px">Knowledge Test</h2>
+                    <p class="sub" style="margin:0">No knowledge test has been sent to this applicant.</p>
+                </div>
+                <span class="tg s-pending">Not sent</span>
+            </div>
+            <div style="margin-top:14px">
+                <button class="p" data-act="sendtest" data-id="${r.id}">Send knowledge test</button>
+            </div>
+        </div>`;
+    }
+
+    if (state == "sent") {
+        return `<div class="card" style="margin-bottom:16px">
+            <div class="qh" style="margin:0">
+                <div>
+                    <h2 style="margin-bottom:4px">Knowledge Test</h2>
+                    <p class="sub" style="margin:0">The test was sent. The applicant has not submitted it yet.</p>
+                </div>
+                <span class="tg s-pending">Sent</span>
+            </div>
+            <div class="mu" style="margin-top:12px">${qs.length} questions &middot; sent ${esc(fmt(t.sent_at || t.created_at))}</div>
+        </div>`;
+    }
+
+    var answers = Array.isArray(t.answers) ? t.answers : [];
+    return `<div class="card" style="margin-bottom:16px">
+        <div class="qh" style="margin:0">
+            <div>
+                <h2 style="margin-bottom:4px">Knowledge Test</h2>
+                <p class="sub" style="margin:0">The applicant has submitted the knowledge test. Review the answers below before deciding.</p>
+            </div>
+            <span class="tg s-active">Submitted</span>
+        </div>
+        <div style="margin-top:14px">
+            ${qs.map((q, i) => `<div style="padding:13px 0;border-top:1px solid var(--bd)">
+                <div style="font-weight:750;margin-bottom:7px">${i + 1}. ${esc(q)}</div>
+                <div class="ans">${esc(answers[i] || "-")}</div>
+            </div>`).join("")}
+        </div>
+        ${t.submitted_at ? `<div class="mu" style="margin-top:10px">Submitted ${esc(fmt(t.submitted_at))}</div>` : ""}
+    </div>`;
+}
+
+function vDetail() {
+    var r = rows.find(x => x.id == cur);
+    if (!r) {
+        cur = null;
+        return vApps()
+    }
+
+    var a = r.answers || {};
+    var st = stOf(r);
+    var cs = cm.filter(c => c.application_id == r.id);
+    var kt = knowledgeTestFor(r.id);
+    var testSubmitted = kt && kt.status == "submitted";
+    var canAccept = testSubmitted;
+
+    return `<button class="s" data-act="back">&larr; Back</button>
+    <div class="card s-${st}" style="margin-top:12px">
+        <h1>${esc(a.ign || "Applicant")} <span class="tg">${esc(statusLabel(st))}</span></h1>
+        <div class="mu">${esc(a.discord || "-")} &middot; submitted ${esc(fmt(r.created_at))}</div>
+        <div class="bar">
+            <button class="s ${st=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button>
+            <button class="p ${!canAccept && st!="accepted" ? "disabled" : ""}" data-act="status" data-v="accepted"${!canAccept && st!="accepted" ? ' disabled title="Knowledge test must be submitted first"' : ""}>Accepted</button>
+            <button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button>
+            <button class="s" data-act="toroster">+ Add to roster</button>
+            <button class="ab dl" data-act="delapp" title="Delete application">${ic("trash",15)}Delete</button>
+        </div>
+        ${!canAccept && st == "pending" ? `<div class="mu" style="margin-top:10px">Acceptance is locked until the applicant submits the knowledge test.</div>` : ""}
+    </div>
+
+    ${knowledgeTestCard(r)}
+
+    <div class="dg">
+        <div>
+            <div class="card">
+                <h2>Answers</h2>
+                ${ALL.map(q => `<div><b>${esc(q.l)}</b><div class="ans">${esc(a[q.id] || "-")}</div></div>`).join("")}
+            </div>
+        </div>
+        <div class="st">
+            <div class="card">
+                <h2>Applicant status</h2>
+                <div class="mu" style="margin-bottom:8px">Reference: ${esc(r.ref || "-")}</div>
+                <textarea id="dn" placeholder="Optional message the applicant sees on the status page">${esc(r.decision_note || "")}</textarea>
+                <button class="p" data-act="savenote">Save message</button>
+            </div>
+            <div class="card">
+                <h2>Comments (${cs.length})</h2>
+                ${cs.map(c => `<div class="cm"><div class="mu cmh"><span>${esc(c.author)} &middot; ${esc(fmt(c.created_at))}</span><button class="ab dl sm" data-act="delcm" data-id="${c.id}" title="Delete comment">${ic("trash",14)}</button></div>${esc(c.body)}</div>`).join("") || `<p class="mu">No comments yet.</p>`}
+                <textarea id="cb" placeholder="Write a comment (only logged-in admins can see it)"></textarea>
+                <button class="p" data-act="post">Post comment</button>
+            </div>
+        </div>
+    </div>`;
+}
+
 function vLoa() {
     var cards = loa.map(l => {
         var on = activeLoa(l); return `<div class="qc s-${on?"active":"ended"}" style="cursor:default"><div class="top2"><span class="tg">${on?"active":"ended"}</span><button class="ab dl sm" data-act="loadel" data-id="${l.id}" title="Delete LOA">${ic("trash",15)}Delete</button></div><h3>${esc(l.ign)}</h3><div class="mu" style="margin-bottom:8px">${esc(l.discord)}</div><div class="ln"><span>From</span>${esc(l.start_date)}</div><div class="ln"><span>Until</span>${esc(l.end_date||"open")}</div><div class="ans" style="margin:10px 0 0">${esc(l.reason||"-")}</div></div>`
@@ -3068,12 +3270,40 @@ const hideSr = () => {
     } else if (act == "setreview") {
         if (await run(sb.from("applications").update({ status: "pending", decision_note: autoStatusNote("pending") }).eq("id", id))) load()
     } else if (act == "setst") {
+        if (v == "accepted") {
+            var targetTest = knowledgeTestFor(id);
+            if (!targetTest || targetTest.status != "submitted") {
+                return alert("The applicant must submit the knowledge test before you can accept the application.")
+            }
+        }
         if (await run(sb.from("applications").update({ status: v, decision_note: autoStatusNote(v) }).eq("id", id))) {
-            if (v == "accepted") await acceptApp(rows.find(x => x.id == id)); load()
+            if (v == "accepted") await acceptApp(rows.find(x => x.id == id));
+            load()
         }
     } else if (act == "status") {
+        if (v == "accepted") {
+            var currentTest = knowledgeTestFor(cur);
+            if (!currentTest || currentTest.status != "submitted") {
+                return alert("The applicant must submit the knowledge test before you can accept the application.")
+            }
+        }
         if (await run(sb.from("applications").update({ status: v, decision_note: autoStatusNote(v) }).eq("id", cur))) {
-            if (v == "accepted") await acceptApp(rows.find(x => x.id == cur)); load()
+            if (v == "accepted") await acceptApp(rows.find(x => x.id == cur));
+            load()
+        }
+    } else if (act == "sendtest") {
+        var existingTest = knowledgeTestFor(id);
+        if (existingTest) {
+            return alert(existingTest.status == "submitted" ? "This applicant has already submitted the knowledge test." : "The knowledge test has already been sent.")
+        }
+        if (await run(sb.from("knowledge_tests").insert({
+            application_id: String(id),
+            questions: KNOWLEDGE_TEST_QUESTIONS,
+            status: "sent",
+            sent_by: me
+        }))) {
+            await load();
+            alert("Knowledge test sent.")
         }
     } else if (act == "savenote") {
         if (await run(sb.from("applications").update({
@@ -3254,7 +3484,18 @@ function init() {
         }
     }; $("pw").addEventListener("keydown", e => {
         if (e.key == "Enter") $("go").click()
-    }); root.addEventListener("click", onClick); root.addEventListener("input", onInput); root.addEventListener("change", e => {
+    });
+    root.addEventListener("click", function(e) {
+        var t = e.target && e.target.closest ? e.target.closest('[data-act="open"]') : null;
+        if (!t) return;
+        e.preventDefault();
+        e.stopPropagation();
+        cur = t.dataset.id;
+        view = "apps";
+        render();
+        scrollTo(0, 0);
+    }, true);
+    root.addEventListener("click", onClick); root.addEventListener("input", onInput); root.addEventListener("change", e => {
         if (e.target.id == "s_acc") render()
     }); $("gq").addEventListener("focus", () => {
         if ($("gq").value.trim()) $("sres").classList.remove("hide")
@@ -3776,20 +4017,124 @@ try {
 } catch (e) {
 }
 $("stf").addEventListener("submit", async function(e) {
-    e.preventDefault(); var c = $("st_ref").value.trim().toUpperCase(), box = $("stres"); if (!c) return; if (!sb) {
-        box.hidden = false; box.innerHTML = '<p style="margin:0;color:var(--er)">Cannot reach the server right now.</p>'; return
+    e.preventDefault();
+
+    var c = $("st_ref").value.trim().toUpperCase();
+    var box = $("stres");
+
+    if (!c) return;
+
+    if (!sb) {
+        box.hidden = false;
+        box.innerHTML = '<p style="margin:0;color:var(--er)">Cannot reach the server right now.</p>';
+        return
     }
-    var btn = $("stgo"); btn.disabled = true; btn.textContent = "Checking..."; var r = await sb.rpc("check_application", {
+
+    var btn = $("stgo");
+    btn.disabled = true;
+    btn.textContent = "Checking...";
+
+    var r = await sb.rpc("check_application", {
         p_ref: c
-    }); btn.disabled = false; btn.textContent = "Check status"; box.hidden = false; if (r.error) {
-        box.innerHTML = '<p style="margin:0;color:var(--er)">Could not check right now. Try again later.</p>'; return
+    });
+
+    btn.disabled = false;
+    btn.textContent = "Check status";
+    box.hidden = false;
+
+    if (r.error) {
+        box.innerHTML = '<p style="margin:0;color:var(--er)">Could not check right now. Try again later.</p>';
+        return
     }
-    var d = r.data && r.data[0]; if (!d) {
-        box.innerHTML = '<p style="margin:0;color:var(--er)">No application found for that code. Double-check it and try again.</p>'; return
+
+    var d = r.data && r.data[0];
+
+    if (!d) {
+        box.innerHTML = '<p style="margin:0;color:var(--er)">No application found for that code. Double-check it and try again.</p>';
+        return
     }
+
     var lab = d.status == "pending" ? "Under review" : d.status == "accepted" ? "Accepted" : "Not selected this time";
-    var auto = d.status == "pending" ? "Your application is currently being reviewed by the Advisory Team. Please check this page again later for updates." : d.status == "accepted" ? "Your application has been accepted by the Advisory Team." : "Your application was reviewed but was not selected this time.";
-    box.innerHTML = '<h2 style="margin:0 0 6px">' + esc(lab) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' &middot; submitted ' + esc(fmt(d.submitted)): '') + '</div><p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(d.note || auto) + '</p>';
+    var auto = d.status == "pending"
+        ? "Your application is currently being reviewed by the Advisory Team. Please check this page again later for updates."
+        : d.status == "accepted"
+        ? "Your application has been accepted by the Advisory Team."
+        : "Your application was reviewed but was not selected this time.";
+
+    var base = '<h2 style="margin:0 0 6px">' + esc(lab) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' &middot; submitted ' + esc(fmt(d.submitted)) : '') + '</div><p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(d.note || auto) + '</p>';
+
+    if (d.status != "pending") {
+        box.innerHTML = base;
+        return
+    }
+
+    var kt = await sb.rpc("get_application_knowledge_test", {
+        p_ref: c
+    });
+
+    if (kt.error || !kt.data || !kt.data[0]) {
+        box.innerHTML = base;
+        return
+    }
+
+    var test = kt.data[0];
+    var questions = Array.isArray(test.questions) ? test.questions : [];
+
+    if (test.status == "sent") {
+        box.innerHTML = base + `<div class="c" style="margin-top:18px;text-align:left">
+            <h2 style="margin-top:0">Knowledge Test</h2>
+            <p class="mu">Please answer all ${questions.length} questions. Your answers will be sent to the Advisory Team for review.</p>
+            <div id="kt_public_form">
+                ${questions.map((q, i) => `<label class="q" style="display:block;margin-top:16px">
+                    <b>${i + 1}. ${esc(q)}</b>
+                    <textarea id="kt_${i}" maxlength="3000" placeholder="Your answer"></textarea>
+                </label>`).join("")}
+                <button class="p" id="kt_submit" type="button" style="margin-top:16px">Submit knowledge test</button>
+                <p id="kt_msg" class="mu" style="margin:10px 0 0"></p>
+            </div>
+        </div>`;
+        var submitBtn = $("kt_submit");
+        if (submitBtn) {
+            submitBtn.onclick = async function() {
+                var answers = questions.map(function(q, i) {
+                    return ($("kt_" + i).value || "").trim()
+                });
+
+                if (answers.some(function(a) { return !a })) {
+                    $("kt_msg").textContent = "Please answer every question before submitting.";
+                    $("kt_msg").style.color = "var(--er)";
+                    return
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+
+                var sr = await sb.rpc("submit_application_knowledge_test", {
+                    p_ref: c,
+                    p_answers: answers
+                });
+
+                if (sr.error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit knowledge test";
+                    $("kt_msg").textContent = sr.error.message || "The knowledge test could not be submitted.";
+                    $("kt_msg").style.color = "var(--er)";
+                    return
+                }
+
+                box.innerHTML = base + `<div class="c" style="margin-top:18px;text-align:left">
+                    <h2 style="margin-top:0">Knowledge Test Submitted</h2>
+                    <p style="margin:0">Your answers have been submitted successfully. The Advisory Team can now review your knowledge test before making a decision.</p>
+                </div>`;
+            }
+        }
+        return
+    }
+
+    box.innerHTML = base + `<div class="c" style="margin-top:18px;text-align:left">
+        <h2 style="margin-top:0">Knowledge Test Submitted</h2>
+        <p style="margin:0">Your knowledge test has already been submitted and is now being reviewed by the Advisory Team.</p>
+    </div>`;
 });
 /*  Mobile menu  */
 $("burger").onclick = function(e) {
