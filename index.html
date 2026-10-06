@@ -1490,7 +1490,7 @@ input:disabled {
       <form class="c" id="lf" novalidate>
         <p style="margin:0 0 20px;color:var(--mu);font-size:14.5px">File this before you go inactive. It shows up on the admin page right away.</p>
 
-        <div class="q" id="lq_ign"><label class="l" for="l_ign">Ingame Name (IGN) <span class="req">*</span></label><input type="text" id="l_ign" maxlength="80" autocomplete="off"></div>
+        <div class="q" id="lq_ign"><label class="l" for="l_ign">Ingame Name (IGN) <span class="req">*</span></label><input type="text" id="l_ign" maxlength="80" autocomplete="off" autocorrect="off" spellcheck="false"></div>
       <div class="q" id="lq_dc"><label class="l" for="l_dc">Discord Username <span class="req">*</span></label><input type="text" id="l_dc" maxlength="80" autocomplete="off" autocapitalize="none"></div>
 
       <div class="g2">
@@ -3612,23 +3612,39 @@ function saveMe(a, b) {
 }
 async function checkLoaRosterMember(ign) {
     if (!sb) return { ok: false, error: "Can't reach the server. Try again later." };
-    // Match roster names flexibly: ignore capitalization, treat underscores as spaces,
-    // collapse repeated spaces, and allow a first-name-only submission when that
-    // first name belongs to a current roster member.
-    var res = await sb.from("roster").select("ign");
-    if (res.error) return { ok: false, error: "We couldn't verify the Advisory Team roster right now. Please try again later." };
+    // Normalize: ignore capitalization, treat underscores as spaces, strip invisible
+    // characters that phone keyboards / Discord copy-paste add, collapse spaces.
     var normalize = function(value) {
-        return String(value || "").replace(/_/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+        return String(value || "")
+            .normalize("NFKC")
+            .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
+            .replace(/_/g, " ")
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
     };
     var wanted = normalize(ign);
     var wantedFirst = wanted.split(" ")[0];
     if (!wantedFirst) return { ok: false };
-    var member = (res.data || []).some(function(m) {
+    // 1) Preferred: server-side check (works for logged-out visitors, e.g. phones,
+    //    without exposing the roster). Needs the is_roster_member SQL function.
+    try {
+        var rpc = await sb.rpc("is_roster_member", { p_ign: wanted });
+        if (!rpc.error && typeof rpc.data === "boolean") return { ok: rpc.data };
+    } catch (e) {}
+    // 2) Fallback: read the roster table directly (only works if anon can SELECT it).
+    var res = await sb.from("roster").select("ign");
+    if (res.error) return { ok: false, error: "We couldn't verify the Advisory Team roster right now. Please try again later." };
+    if (!res.data || !res.data.length) {
+        // An empty list almost always means row-level security is hiding the roster
+        // from logged-out visitors, not that the roster is really empty.
+        return { ok: false, error: "We couldn't verify the Advisory Team roster right now. Please tell an admin." };
+    }
+    var member = res.data.some(function(m) {
         var rosterName = normalize(m.ign);
         if (!rosterName) return false;
         if (rosterName === wanted) return true;
-        var rosterFirst = rosterName.split(" ")[0];
-        return rosterFirst === wantedFirst;
+        return rosterName.split(" ")[0] === wantedFirst;
     });
     return { ok: member };
 }
