@@ -2745,6 +2745,30 @@ th {
     stroke: currentColor;
     stroke-width: 1.7;
 }
+
+/* ---- sidebar menu (desktop + mobile) ---- */
+.mb{flex-shrink:0}
+.scrim{display:none}
+.app.sb-collapsed .sb{display:none}
+@media(max-width:900px){
+  .app{flex-direction:row}
+  .app .sb,.app.sb-collapsed .sb{display:flex;position:fixed;top:0;left:0;bottom:0;width:min(290px,84vw);height:100%;flex-direction:column;flex-wrap:nowrap;align-items:stretch;overflow-y:auto;margin:0;padding:18px 14px;z-index:60;transform:translateX(-105%);transition:transform .22s ease;border-right:1px solid var(--bd);border-bottom:0}
+  .app.menu-open .sb{transform:none;box-shadow:12px 0 40px rgba(0,0,0,.5)}
+  #nav{flex-direction:column;flex-wrap:nowrap;order:0;width:100%}
+  .nv{width:100%}
+  .nv.sub2{padding-left:42px}
+  .nv.home{margin-top:10px;border-top:1px solid var(--bd);border-radius:0 0 10px 10px;padding-top:14px}
+  .sp{display:block;flex:1}
+  .pf{padding:12px 4px 0;margin-left:0;border-top:1px solid var(--bd)}
+  .pf .menu{top:auto;bottom:100%;margin:0 0 6px}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
+  .app.menu-open .scrim{opacity:1;pointer-events:auto}
+  .top{position:sticky;top:0;gap:8px;padding:10px 12px;flex-wrap:nowrap}
+  .srch{flex:1;min-width:0}
+  .srch input{min-width:0;width:100%}
+  .nw{margin-left:0}
+  .nw .p{padding:8px 12px;white-space:nowrap}
+}
 </style>
 
 <div id="login" class="lg"><div>
@@ -2762,8 +2786,9 @@ th {
  <nav id="nav"></nav><div class="sp"></div>
  <div class="pf"><div class="av" id="av">A</div><div class="pi"><div id="pname"></div><div class="er pr" id="prole">Admin Access</div></div><button class="ib" data-act="pm" title="Menu">&#8942;</button><div class="menu hide" id="pmenu"><button data-act="home">Back to main page</button><button data-act="out">Log out</button></div></div>
 </aside>
+<div class="scrim"></div>
 <div class="mn">
- <header class="top"><div class="srch"><span class="si" id="si"></span><input id="gq" placeholder="Search applicants, LOA or roster...  (Ctrl+K)" autocomplete="off"><div id="sres" class="sres hide"></div></div>
+ <header class="top"><button class="ib mb" id="mbtn" data-act="menu" title="Menu" aria-label="Menu"></button><div class="srch"><span class="si" id="si"></span><input id="gq" placeholder="Search applicants, LOA or roster...  (Ctrl+K)" autocomplete="off"><div id="sres" class="sres hide"></div></div>
  <button class="ib" id="bell" data-act="bell" title="Pending applications"></button>
  <div class="nw"><button class="p" data-act="nt">+ New</button><div class="menu hide" id="nmenu"><button data-act="newloa">New LOA</button><button data-act="newros">New roster member</button></div></div></header>
  <div class="ahero hide" id="hero"><div class="bnr"><img class="bi" alt=""><div><div class="bt">Advisory Team</div><div class="bs">Public Relations &middot; City of Manila Roleplay</div></div></div></div>
@@ -2778,7 +2803,7 @@ window.Admin = (function() {
     }; const esc = s => {
         var d = document.createElement("div"); d.textContent = s == null ? "": s; return d.innerHTML.replace(/"/g, "&quot;")
     }; const ICO = {
-        grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>', doc: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>', folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>', sliders: '<path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>', search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/>', users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c3 0 4.5 2 4.5 5"/>', cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', alert: '<path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h0"/>', chev: '<path d="m6 9 6 6 6-6"/>', edit: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>', trash: '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/>', back: '<path d="M19 12H5M11 6l-6 6 6 6"/>', user: '<circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.8-4 3.1-6 7.2-6s6.4 2 7.2 6"/>'
+        grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>', doc: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>', folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>', sliders: '<path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>', search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/>', users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c3 0 4.5 2 4.5 5"/>', cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', alert: '<path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17h0"/>', chev: '<path d="m6 9 6 6 6-6"/>', edit: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>', trash: '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><path d="M9 7V4h6v3"/>', back: '<path d="M19 12H5M11 6l-6 6 6 6"/>', menu: '<path d="M4 6h16M4 12h16M4 18h16"/>', user: '<circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.8-4 3.1-6 7.2-6s6.4 2 7.2 6"/>'
     }; const ic = (n, s) => {
         s = s || 18; return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICO[n]}</svg>`
     }; var S = [{
@@ -2861,7 +2886,14 @@ const saveCfg = () => {
 }
 const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => !l.end_date || l.end_date >= today(); const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
     var n = infN(m); return `<span class="tg ${n>=INF_WARN?"s-rejected":n?"s-warn":"s-active"}">${n}</span>${n>=INF_WARN?' <span class="er" title="Review needed">&#9888;</span>':""}`
-}; const stOf = r => r.status || "pending"; const statusLabel = s => s == "pending" ? "Under Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => s == "pending" ? "Your application is now under review by the Advisory Team. Please check your application status again later for updates." : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const cnt = k => rows.filter(r => stOf(r) == k).length; const ago = d => {
+}; const stOf = r => r.status || "pending";
+const stageOf = r => { var s = stOf(r); if (s != "pending") return s; var t = ktests.find(x => String(x.application_id) == String(r.id)); return !t ? "pending" : t.status == "submitted" ? "final" : "ktest" };
+const clsOf = s => (s == "ktest" || s == "final") ? "pending" : s;
+const AUTO_NOTES = {
+    pending: "Your application is now under review by the Advisory Team. Please check your application status again later for updates.",
+    ktest: "Your application passed the first review. Please answer the knowledge test on the status page, then check back for updates.",
+    final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision."
+}; const statusLabel = s => s == "pending" ? "Under Review" : s == "ktest" ? "Pending Knowledge Test" : s == "final" ? "Final Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => AUTO_NOTES[s] ? AUTO_NOTES[s] : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const cnt = k => rows.filter(r => stageOf(r) == k).length; const needN = () => cnt("pending") + cnt("final"); const ago = d => {
     var m = Math.max(0, Math.round((Date.now() - new Date(d)) / 6e4)); return m < 1 ? "just now": m < 60 ? m + " mins ago": m < 1440 ? Math.round(m / 60) + " hrs ago": Math.round(m / 1440) + " days ago"
 };
 // ---- auth ----
@@ -2895,88 +2927,68 @@ async function check() {
     }
 }
 //  data
-async function load() {
-    var q = await Promise.all([
-        sb.from("applications").select("*").order("created_at", {
-            ascending: false
-        }),
-        sb.from("comments").select("*").order("created_at"),
-        sb.from("loa").select("*").order("start_date", {
-            ascending: false
-        }),
-        sb.from("roster").select("*").order("created_at"),
-        sb.from("infractions").select("*").order("created_at", {
-            ascending: false
-        }),
-        sb.from("announcements").select("*").order("created_at", {
-            ascending: false
-        }),
-        sb.from("roster_updates").select("*").order("effective_on", {
-            ascending: false
-        }).order("created_at", {
-            ascending: false
-        }),
-        sb.from("knowledge_tests").select("*").order("created_at", {
-            ascending: false
-        }),
-        sb.from("site_settings").select("*"),
-        sb.from("audit_log").select("*").order("created_at", {
-            ascending: false
-        }).limit(100)
-    ]);
-
-    var e = q.find(x => x.error);
-    msg = e ? e.error.message + " (did you run the knowledge test SQL in Supabase?)" : "";
-
-    rows = q[0].data || [];
-    cm = q[1].data || [];
-    loa = q[2].data || [];
-    ros = q[3].data || [];
-    inf = q[4].data || [];
-    ann = q[5].data || [];
-    rup = q[6].data || [];
-    ktests = q[7].data || [];
-
-    site = {};
-    (q[8].data || []).forEach(x => {
-        site[x.key] = x.value
-    });
-
-    aud = q[9].data || [];
-    render();
+const Q = {
+    applications: () => sb.from("applications").select("*").order("created_at", { ascending: false }),
+    comments: () => sb.from("comments").select("*").order("created_at"),
+    loa: () => sb.from("loa").select("*").order("start_date", { ascending: false }),
+    roster: () => sb.from("roster").select("*").order("created_at"),
+    infractions: () => sb.from("infractions").select("*").order("created_at", { ascending: false }),
+    announcements: () => sb.from("announcements").select("*").order("created_at", { ascending: false }),
+    roster_updates: () => sb.from("roster_updates").select("*").order("effective_on", { ascending: false }).order("created_at", { ascending: false }),
+    knowledge_tests: () => sb.from("knowledge_tests").select("*").order("created_at", { ascending: false }),
+    site_settings: () => sb.from("site_settings").select("*"),
+    audit_log: () => sb.from("audit_log").select("*").order("created_at", { ascending: false }).limit(100)
+};
+const SET = {
+    applications: d => rows = d, comments: d => cm = d, loa: d => loa = d, roster: d => ros = d, infractions: d => inf = d,
+    announcements: d => ann = d, roster_updates: d => rup = d, knowledge_tests: d => ktests = d, audit_log: d => aud = d,
+    site_settings: d => { site = {}; d.forEach(x => { site[x.key] = x.value }) }
+};
+const LOCAL = { applications: () => rows, comments: () => cm, loa: () => loa, roster: () => ros, infractions: () => inf, announcements: () => ann, roster_updates: () => rup };
+// Fetch only the tables that changed, in parallel. quiet = update data without re-rendering.
+async function refresh(tables, quiet) {
+    var all = Object.keys(Q); tables = tables || all;
+    var res = await Promise.all(tables.map(t => Q[t]()));
+    var e = res.find(x => x.error);
+    if (e) msg = e.error.message + " (did you run the knowledge test SQL in Supabase?)"; else if (tables.length == all.length) msg = "";
+    tables.forEach((t, i) => { if (!res[i].error) SET[t](res[i].data || []) });
+    if (!quiet) render();
 }
+async function load() { return refresh() }
 // render 
 function navHtml() {
-    var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", cnt("pending")) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
+    var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
 }
 function render() {
-    $("nav").innerHTML = navHtml(); var p = cnt("pending"); $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
+    $("nav").innerHTML = navHtml(); var p = needN(); $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
 }
 function pills() {
-    return `<div class="pills">${["all","pending","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${c}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.length:cnt(c)})</button>`).join("")}</div>`;
+    return `<div class="pills">${["all","pending","ktest","final","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.length:cnt(c)})</button>`).join("")}</div>`;
 }
 function appCard(r) {
-    var a=r.answers||{},st=stOf(r),n=cm.filter(c=>c.application_id==r.id).length;
+    var a=r.answers||{},sg=stageOf(r),st=clsOf(sg),n=cm.filter(c=>c.application_id==r.id).length;
     var acts = `<button class="p" data-act="open" data-id="${r.id}">${st == "accepted" ? "View application" : "Review application"}</button>`;
     return `<article class="app-row s-${st}" data-act="open" data-id="${r.id}">
         <div class="app-main"><div class="app-avatar app-avatar-user" aria-hidden="true">${ic("user",22)}</div><div style="min-width:0"><div class="app-name">${esc(a.ign||"Unknown applicant")}</div><div class="app-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}${n?` &bull; ${n} comment${n>1?"s":""}`:""}</div></div></div>
-        <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(st))}</div></div>
+        <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(sg))}</div></div>
         <div class="app-field server"><div class="app-field-label">Server / experience</div><div class="app-field-value">${esc(a.years||a.server||"—")}</div></div>
         <div class="app-actions">${acts}</div>
     </article>`;
 }
 
 function vDash() {
-    var act=loa.filter(activeLoa),nt=rows.filter(r=>(r.created_at||"").slice(0,10)==today()).length,pending=rows.filter(r=>stOf(r)=="pending");
+    var act=loa.filter(activeLoa),nt=rows.filter(r=>(r.created_at||"").slice(0,10)==today()).length,pending=rows.filter(r=>stageOf(r)=="pending"),ktl=rows.filter(r=>stageOf(r)=="ktest"),fin=rows.filter(r=>stageOf(r)=="final");
+    var qrow=(r,lab)=>{var a=r.answers||{};return `<div class="review-row"><div><div class="review-name">${esc(a.ign||"Unknown applicant")}</div><div class="review-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}</div></div><div><span class="review-status" style="--c:#4aa8ff"><i></i>${lab}</span></div><div class="review-extra mu">${esc(a.pos||"Applicant")}</div><div class="qa"><button class="s" data-act="open" data-id="${r.id}">Open</button></div></div>`};
+    var emp=t=>`<div class="activity-item"><div><span class="mu">${t}</span></div></div>`;
     var recent=pending.slice(0,5).map(r=>{var a=r.answers||{};return `<div class="review-row"><div><div class="review-name">${esc(a.ign||"Unknown applicant")}</div><div class="review-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}</div></div><div><span class="review-status" style="--c:#4aa8ff"><i></i>Under Review</span></div><div class="review-extra mu">${esc(a.pos||"Applicant")}</div><div class="qa"><button class="s" data-act="open" data-id="${r.id}">Review</button></div></div>`});
     var activity=[];rows.slice(0,3).forEach(r=>{var a=r.answers||{};activity.push(`<div class="activity-item"><span class="activity-dot"></span><div><b>${esc(a.ign||"Applicant")}</b> submitted an application.<span class="mu">${esc(ago(r.created_at))}</span></div></div>`)});
     rup.slice(0,3).forEach(x=>activity.push(`<div class="activity-item"><span class="activity-dot"></span><div><b>${esc(x.ign||"Roster")}</b> had a roster update.<span class="mu">${esc(fmt(x.effective_on||x.created_at))}</span></div></div>`));
     if(!activity.length)activity.push('<div class="activity-item"><div><span class="mu">No recent activity.</span></div></div>');
-    return `<div class="qh" style="margin-bottom:20px"><div><h1 style="margin-bottom:5px">Live Dashboard</h1><p class="sub" style="margin:0">Welcome back, ${esc(me)}. Here is what needs your attention.</p></div><button class="s" data-act="nav" data-v="apps">View applications</button></div><div class="stats"><div class="stat" data-act="nav" data-v="apps"><div class="t">Applications</div><div class="sn">${rows.length}${nt?`<span class="tr">+${nt} today</span>`:""}</div><div class="mu">${pending.length} under review &middot; ${cnt("accepted")} accepted</div></div><div class="stat" data-act="nav" data-v="loa"><div class="t">On LOA now</div><div class="sn">${act.length}</div><div class="mu">${loa.length} total records</div></div><div class="stat" data-act="nav" data-v="roster"><div class="t">Roster</div><div class="sn">${ros.length}</div><div class="mu">active members</div></div><div class="stat" data-act="bell"><div class="t">Needs review</div><div class="sn">${pending.length}</div><div class="mu">${pending.length?"Applications waiting for review":"All caught up"}</div></div></div><div class="dashboard-grid"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Review queue</h2><p>Applications waiting for an Advisory Team decision.</p></div><span class="tg">${pending.length}</span></div><div class="review-list">${recent.length?recent.join(""):'<div class="activity-item"><div><b>All caught up</b><span class="mu">There are no applications waiting for review.</span></div></div>'}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Recent activity</h2><p>Latest activity across the team.</p></div></div>${activity.slice(0,6).join("")}</section></div><div class="card" style="margin-top:18px"><h2>On LOA now</h2>${act.length?act.slice(0,6).map(l=>`<div class="row" data-act="nav" data-v="loa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.discord)}</span></div><span class="mu">until ${esc(l.end_date||"open")}</span></div>`).join(""):'<p class="mu" style="margin:0">Nobody is on LOA.</p>'}</div>`;
+    return `<div class="qh" style="margin-bottom:20px"><div><h1 style="margin-bottom:5px">Live Dashboard</h1><p class="sub" style="margin:0">Welcome back, ${esc(me)}. Here is what needs your attention.</p></div><button class="s" data-act="nav" data-v="apps">View applications</button></div><div class="stats"><div class="stat" data-act="nav" data-v="apps"><div class="t">Applications</div><div class="sn">${rows.length}${nt?`<span class="tr">+${nt} today</span>`:""}</div><div class="mu">${pending.length} under review &middot; ${cnt("accepted")} accepted</div></div><div class="stat" data-act="nav" data-v="loa"><div class="t">On LOA now</div><div class="sn">${act.length}</div><div class="mu">${loa.length} total records</div></div><div class="stat" data-act="nav" data-v="roster"><div class="t">Roster</div><div class="sn">${ros.length}</div><div class="mu">active members</div></div><div class="stat" data-act="bell"><div class="t">Needs review</div><div class="sn">${pending.length+fin.length}</div><div class="mu">${pending.length+fin.length?"Waiting on you: "+pending.length+" new &middot; "+fin.length+" final":"All caught up"}</div></div></div><div class="dashboard-grid"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Review queue</h2><p>Applications waiting for an Advisory Team decision.</p></div><span class="tg">${pending.length}</span></div><div class="review-list">${recent.length?recent.join(""):'<div class="activity-item"><div><b>All caught up</b><span class="mu">There are no applications waiting for review.</span></div></div>'}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Recent activity</h2><p>Latest activity across the team.</p></div></div>${activity.slice(0,6).join("")}</section></div><div class="dashboard-grid" style="margin-top:18px"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Pending Knowledge Test</h2><p>Test sent, waiting for the applicant to submit.</p></div><span class="tg">${ktl.length}</span></div><div class="review-list">${ktl.length?ktl.map(r=>qrow(r,"Pending Knowledge Test")).join(""):emp("Nobody is waiting on a test.")}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Final Review</h2><p>Test submitted. Ready for your decision.</p></div><span class="tg">${fin.length}</span></div><div class="review-list">${fin.length?fin.map(r=>qrow(r,"Final Review")).join(""):emp("No applications in final review.")}</div></section></div><div class="card" style="margin-top:18px"><h2>On LOA now</h2>${act.length?act.slice(0,6).map(l=>`<div class="row" data-act="nav" data-v="loa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.discord)}</span></div><span class="mu">until ${esc(l.end_date||"open")}</span></div>`).join(""):'<p class="mu" style="margin:0">Nobody is on LOA.</p>'}</div>`;
 }
 
 function vApps() {
-    var f = rows.filter(r => filt == "all" || stOf(r) == filt);
+    var f = rows.filter(r => filt == "all" || stageOf(r) == filt);
     return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
 }
 function knowledgeTestFor(appId) {
@@ -3065,7 +3077,7 @@ function vDetail() {
     }
 
     var a = r.answers || {};
-    var st = stOf(r);
+    var sg = stageOf(r), st = stOf(r);
     var cs = cm.filter(c => c.application_id == r.id);
     var kt = knowledgeTestFor(r.id);
     var testSubmitted = kt && kt.status == "submitted";
@@ -3073,16 +3085,16 @@ function vDetail() {
 
     return `<button class="s" data-act="back">&larr; Back</button>
     <div class="card s-${st}" style="margin-top:12px">
-        <h1>${esc(a.ign || "Applicant")} <span class="tg">${esc(statusLabel(st))}</span></h1>
+        <h1>${esc(a.ign || "Applicant")} <span class="tg">${esc(statusLabel(sg))}</span></h1>
         <div class="mu">${esc(a.discord || "-")} &middot; submitted ${esc(fmt(r.created_at))}</div>
         <div class="bar">
-            <button class="s ${st=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button>
+            <button class="s ${sg=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button>
             <button class="p ${!canAccept && st!="accepted" ? "disabled" : ""}" data-act="status" data-v="accepted"${!canAccept && st!="accepted" ? ' disabled title="Knowledge test must be submitted first"' : ""}>Accepted</button>
             <button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button>
             <button class="s" data-act="toroster">+ Add to roster</button>
             <button class="ab dl" data-act="delapp" title="Delete application">${ic("trash",15)}Delete</button>
         </div>
-        ${!canAccept && st == "pending" ? `<div class="mu" style="margin-top:10px">Acceptance is locked until the applicant submits the knowledge test.</div>` : ""}
+        ${!canAccept && st == "pending" ? `<div class="mu" style="margin-top:10px">Acceptance is locked until the applicant submits the knowledge test.</div>` : ""}${sg == "final" ? `<div class="mu" style="margin-top:10px">Knowledge test received. Ready for your final decision.</div>` : ""}
     </div>
 
     ${knowledgeTestCard(r)}
@@ -3098,7 +3110,7 @@ function vDetail() {
             <div class="card">
                 <h2>Applicant status</h2>
                 <div class="mu" style="margin-bottom:8px">Reference: ${esc(r.ref || "-")}</div>
-                <textarea id="dn" placeholder="Optional message the applicant sees on the status page">${esc(r.decision_note || "")}</textarea>
+                <textarea id="dn" placeholder="Optional message the applicant sees on the status page">${esc(!r.decision_note || Object.values(AUTO_NOTES).includes(r.decision_note) ? (st == "pending" ? autoStatusNote(sg) : (r.decision_note || "")) : r.decision_note)}</textarea>
                 <button class="p" data-act="savenote">Save message</button>
             </div>
             <div class="card">
@@ -3152,7 +3164,7 @@ function vRup() {
         promotion: ["Promotion", "s-active"], joined: ["Joined", "s-active"], demotion: ["Demotion", "s-warn"], removed: ["Removed", "s-rejected"], other: ["Update", "s-pending"]
     }; var cards = rup.map(u => {
         var t = T[u.type] || T.other; return `<div class="qc ${t[1]}" style="cursor:default"><div class="top2"><span class="tg">${t[0]}</span><button class="ab dl sm" data-act="rupdel" data-id="${u.id}" title="Delete update">${ic("trash",15)}Delete</button></div><h3>${esc(u.ign)}</h3><div class="mu" style="margin-bottom:8px">By ${esc(u.issued_by||"-")}</div><div class="ln"><span>Date</span>${esc(u.effective_on||"")}</div><div class="ans" style="margin:10px 0 0">${esc(u.details||"-")}</div></div>`
-    }).join(""); return `<h1>Roster Updates</h1><p class="sub">Promotions, demotions, removals. These show on the landing page (latest 8).</p>
+    }).join(""); return `<h1>Roster Updates</h1><p class="sub">Promotions, demotions, removals. These show on the landing page (latest 6).</p>
  <div class="card"><h2>Log roster update</h2>
  <datalist id="u_names">${names}</datalist>
  <div class="g"><label class="mu">Member<input id="u_m" list="u_names" placeholder="Pick or type a name" autocomplete="off"></label>
@@ -3201,51 +3213,44 @@ function csv() {
 })); var a = document.createElement("a"); a.href = u; a.download = "advisory-applications.csv"; a.click(); URL.revokeObjectURL(u);
 }
 async function acceptApp(r) {
-    if (!r) return; var a = r.answers || {
-}; if (ros.find(x => (x.ign || "").toLowerCase() == (a.ign || "").toLowerCase())) return; var ok = await sb.from("roster").insert({
-    ign: a.ign, discord: a.discord, position: a.pos, joined: today()
-}); if (ok.error) {
-    alert(ok.error.message); return
-}
-await sb.from("roster_updates").insert({
-    ign: a.ign, type: "joined", details: "Accepted as " + (a.pos || "Advisory Team"), effective_on: today(), issued_by: me
-});
+    if (!r) return; var a = r.answers || {};
+    if (ros.find(x => (x.ign || "").toLowerCase() == (a.ign || "").toLowerCase())) return;
+    var res = await Promise.all([
+        sb.from("roster").insert({ ign: a.ign, discord: a.discord, position: a.pos, joined: today() }).select().maybeSingle(),
+        sb.from("roster_updates").insert({ ign: a.ign, type: "joined", details: "Accepted as " + (a.pos || "Advisory Team"), effective_on: today(), issued_by: me }).select().maybeSingle()
+    ]);
+    var er = res[0].error || res[1].error; if (er) { alert(er.message); return }
+    if (res[0].data) ros.push(res[0].data); if (res[1].data) rup.unshift(res[1].data);
 }
 // ---- actions ----
 const hideSr = () => {
     $("sres").classList.add("hide"); $("gq").value = ""
 }; async function onClick(ev) {
-    if (!ev.target.closest(".srch")) $("sres").classList.add("hide"); if (!ev.target.closest(".nw")) $("nmenu").classList.add("hide"); if (!ev.target.closest(".pf")) $("pmenu").classList.add("hide"); var t = ev.target.closest("[data-act]"); if (!t) return; var act = t.dataset.act, id = t.dataset.id, v = t.dataset.v, g = i => $(i).value.trim(); var run = async p => {
+    if (!ev.target.closest(".srch")) $("sres").classList.add("hide"); if (!ev.target.closest(".sb") && !ev.target.closest("#mbtn")) $("app").classList.remove("menu-open"); if (!ev.target.closest(".nw")) $("nmenu").classList.add("hide"); if (!ev.target.closest(".pf")) $("pmenu").classList.add("hide"); var t = ev.target.closest("[data-act]"); if (!t) return; var act = t.dataset.act; if (act != "menu" && act != "grp" && act != "pm" && t.closest(".sb")) $("app").classList.remove("menu-open"); var id = t.dataset.id, v = t.dataset.v, g = i => $(i).value.trim(); var run = async p => {
         var r = await p; if (r.error) {
             alert(r.error.message); return false
         }
         return true
     }; var deleteWithAudit = async function(table, rowId) {
-        var got = await sb.from(table).select("*").eq("id", rowId).maybeSingle();
-        if (got.error) {
-            alert("Could not read the item before deletion, so it was not deleted. " + got.error.message);
-            return false
+        var row = LOCAL[table] ? LOCAL[table]().find(x => String(x.id) == String(rowId)) : null;
+        if (!row) {
+            var got = await sb.from(table).select("*").eq("id", rowId).maybeSingle();
+            if (got.error) { alert("Could not read the item before deletion, so it was not deleted. " + got.error.message); return false }
+            if (!got.data) { alert("That item no longer exists."); return false }
+            row = got.data
         }
-        if (!got.data) {
-            alert("That item no longer exists.");
-            return false
-        }
-       
-        var logged = await sb.from("audit_log").insert({
-            tbl: table, row_data: got.data
-        }).select("id").maybeSingle();
-        if (logged.error) {
-            alert("The deletion was cancelled because the audit log could not be written. " + logged.error.message);
-            return false
-        }
+        var logged = await sb.from("audit_log").insert({ tbl: table, row_data: row }).select("id").maybeSingle();
+        if (logged.error) { alert("The deletion was cancelled because the audit log could not be written. " + logged.error.message); return false }
         var removed = await sb.from(table).delete().eq("id", rowId);
         if (removed.error) {
-            if (logged.data && logged.data.id) await sb.from("audit_log").delete().eq("id", logged.data.id);
-            alert(removed.error.message);
-            return false
+            if (logged.data && logged.data.id) sb.from("audit_log").delete().eq("id", logged.data.id);
+            alert(removed.error.message); return false
         }
+        if (LOCAL[table]) SET[table](LOCAL[table]().filter(x => String(x.id) != String(rowId)));
         return true
-    }; if (act == "home") {
+    }; if (act == "menu") {
+        var ap = $("app"); if (matchMedia("(max-width:900px)").matches) ap.classList.toggle("menu-open"); else ap.classList.toggle("sb-collapsed")
+    } else if (act == "home") {
         location.hash = "#top"
     } else if (act == "nav") {
         view = v; cur = null; render(); scrollTo(0, 0)
@@ -3268,87 +3273,75 @@ const hideSr = () => {
     } else if (act == "back") {
         cur = null; render()
     } else if (act == "setreview") {
-        if (await run(sb.from("applications").update({ status: "pending", decision_note: autoStatusNote("pending") }).eq("id", id))) load()
-    } else if (act == "setst") {
+        if (await run(sb.from("applications").update({ status: "pending", decision_note: autoStatusNote("pending") }).eq("id", id))) refresh(["applications"])
+    } else if (act == "setst" || act == "status") {
+        var tid = act == "status" ? cur : id;
         if (v == "accepted") {
-            var targetTest = knowledgeTestFor(id);
-            if (!targetTest || targetTest.status != "submitted") {
-                return alert("The applicant must submit the knowledge test before you can accept the application.")
-            }
+            var tt = knowledgeTestFor(tid);
+            if (!tt || tt.status != "submitted") return alert("The applicant must submit the knowledge test before you can accept the application.")
         }
-        if (await run(sb.from("applications").update({ status: v, decision_note: autoStatusNote(v) }).eq("id", id))) {
-            if (v == "accepted") await acceptApp(rows.find(x => x.id == id));
-            load()
-        }
-    } else if (act == "status") {
-        if (v == "accepted") {
-            var currentTest = knowledgeTestFor(cur);
-            if (!currentTest || currentTest.status != "submitted") {
-                return alert("The applicant must submit the knowledge test before you can accept the application.")
-            }
-        }
-        if (await run(sb.from("applications").update({ status: v, decision_note: autoStatusNote(v) }).eq("id", cur))) {
-            if (v == "accepted") await acceptApp(rows.find(x => x.id == cur));
-            load()
+        var note = autoStatusNote(v);
+        if (await run(sb.from("applications").update({ status: v, decision_note: note }).eq("id", tid))) {
+            var ar = rows.find(x => x.id == tid); if (ar) { ar.status = v; ar.decision_note = note }
+            if (v == "accepted") await acceptApp(ar);
+            render(); refresh(["applications"], true)
         }
     } else if (act == "sendtest") {
         var existingTest = knowledgeTestFor(id);
-        if (existingTest) {
-            return alert(existingTest.status == "submitted" ? "This applicant has already submitted the knowledge test." : "The knowledge test has already been sent.")
-        }
-        if (await run(sb.from("knowledge_tests").insert({
-            application_id: String(id),
-            questions: KNOWLEDGE_TEST_QUESTIONS,
-            status: "sent",
-            sent_by: me
-        }))) {
-            await load();
-            alert("Knowledge test sent.")
-        }
-    } else if (act == "savenote") {
+        if (existingTest) return alert(existingTest.status == "submitted" ? "This applicant has already submitted the knowledge test." : "The knowledge test has already been sent.");
+        var ktNote = autoStatusNote("ktest");
+        var tr = await Promise.all([
+            sb.from("knowledge_tests").insert({ application_id: String(id), questions: KNOWLEDGE_TEST_QUESTIONS, status: "sent", sent_by: me }).select().maybeSingle(),
+            sb.from("applications").update({ decision_note: ktNote }).eq("id", id)
+        ]);
+        var terr = tr[0].error || tr[1].error; if (terr) return alert(terr.message);
+        if (tr[0].data) ktests.unshift(tr[0].data); else await refresh(["knowledge_tests"], true);
+        var ta = rows.find(x => x.id == id); if (ta) ta.decision_note = ktNote;
+        render(); alert("Knowledge test sent. The applicant is now in Pending Knowledge Test and was given an automatic message.")
+} else if (act == "savenote") {
         if (await run(sb.from("applications").update({
             decision_note: g("dn") || null
         }).eq("id", cur))) {
-            alert("Saved"); load()
+            alert("Saved"); refresh(["applications"])
         }
     } else if (act == "toroster") {
         var r = rows.find(x => x.id == (id || cur)); if (!r) return; var a = r.answers || {
     }; if (await run(sb.from("roster").insert({
         ign: a.ign, discord: a.discord, position: a.pos, joined: today()
     }))) {
-        await load(); alert("Added to roster")
+        await refresh(["roster"]); alert("Added to roster")
     }
 } else if (act == "delapp") {
     if (confirm("Delete this application permanently?") && await deleteWithAudit("applications", cur)) {
-        cur = null; load()
+        cur = null; (render(), refresh(["audit_log"], true))
     }
 } else if (act == "post") {
     var b = g("cb"); if (!b) return; if (await run(sb.from("comments").insert({
         application_id: cur, author: me, body: b
-    }))) load()
+    }))) refresh(["comments"])
 } else if (act == "delcm") {
-    if (confirm("Delete this comment?") && await deleteWithAudit("comments", id)) load()
+    if (confirm("Delete this comment?") && await deleteWithAudit("comments", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "loaadd") {
     if (!g("l_ign")) return alert("IGN is required"); if (await run(sb.from("loa").insert({
         ign: g("l_ign"), discord: g("l_dc"), start_date: g("l_s") || null, end_date: g("l_e") || null, reason: g("l_r")
-    }))) load()
+    }))) refresh(["loa"])
 } else if (act == "loadel") {
-    if (confirm("Delete this LOA?") && await deleteWithAudit("loa", id)) load()
+    if (confirm("Delete this LOA?") && await deleteWithAudit("loa", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "infadd") {
     var m = ros.find(x => x.id == g("i_m")); if (!m) return alert("Select a member"); if (!g("i_r")) return alert("Reason is required"); if (await run(sb.from("infractions").insert({
         roster_id: m.id, ign: m.ign, reason: g("i_r"), issued_by: g("i_by") || me, issued_on: today(), expires_on: g("i_e") || null
     }))) {
-        var c = inf.filter(i => activeInf(i) && i.roster_id == m.id).length + 1; await load(); if (c >= INF_WARN) alert(m.ign + " now has " + c + " active infractions. Consider reviewing their status.")
+        var c = inf.filter(i => activeInf(i) && i.roster_id == m.id).length + 1; await refresh(["infractions"]); if (c >= INF_WARN) alert(m.ign + " now has " + c + " active infractions. Consider reviewing their status.")
     }
 } else if (act == "infdel") {
-    if (confirm("Delete this infraction?") && await deleteWithAudit("infractions", id)) load()
+    if (confirm("Delete this infraction?") && await deleteWithAudit("infractions", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "annadd") {
     if (!g("a_t") || !g("a_b")) return alert("Title and message are required"); var ao = {
         title: g("a_t"), body: g("a_b"), pinned: $("a_p").checked, expires_on: g("a_e") || null
     }; var ap = editA ? sb.from("announcements").update(ao).eq("id", editA): sb.from("announcements").insert(Object.assign(ao, {
         author: me
     })); if (await run(ap)) {
-        editA = null; load()
+        editA = null; refresh(["announcements"])
     }
 } else if (act == "annedit") {
     editA = id; render(); scrollTo(0, 0)
@@ -3360,36 +3353,36 @@ const hideSr = () => {
     })), {
         onConflict: "key"
     }))) {
-        alert("Saved"); load()
+        alert("Saved"); refresh(["site_settings"])
     }
 } else if (act == "audrestore") {
     var au = aud.find(x => x.id == id); if (!au) return; if (!confirm("Restore this " + au.tbl + " entry?")) return; if (await run(sb.from(au.tbl).insert(au.row_data))) {
         await sb.from("audit_log").delete().eq("id", id); load()
     }
 } else if (act == "anndel") {
-    if (confirm("Delete this announcement?") && await deleteWithAudit("announcements", id)) load()
+    if (confirm("Delete this announcement?") && await deleteWithAudit("announcements", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "rupadd") {
-    var nm = g("u_m"), ty = g("u_t"), rk = g("u_rk"), dt = g("u_d"), ef = g("u_e") || today(); if (!nm) return alert("Member name is required"); var rm = ros.find(x => (x.ign || "").toLowerCase() == nm.toLowerCase()); if (!dt && rk) dt = (rm && rm.rank ? rm.rank + " to ": "") + rk; if (!(await run(sb.from("roster_updates").insert({
+    var nm = g("u_m"), ty = g("u_t"), rk = g("u_rk"), dt = g("u_d"), ef = g("u_e") || today(); if (!nm) return alert("Member name is required"); var norm = s => (s || "").toLowerCase().replace(/[\s_]+/g, ""); var rm = ros.find(x => norm(x.ign) == norm(nm)); if (!dt && rk) dt = (rm && rm.rank ? rm.rank + " to ": "") + rk; if (!(await run(sb.from("roster_updates").insert({
         ign: nm, type: ty, details: dt, effective_on: ef, issued_by: g("u_by") || me
     })))) return; if ((ty == "promotion" || ty == "demotion") && rk && rm) await run(sb.from("roster").update({
         rank: rk
     }).eq("id", rm.id)); if (ty == "joined" && !rm) await run(sb.from("roster").insert({
         ign: nm, rank: rk || null, joined: ef
-    })); if (ty == "removed" && $("u_rm").checked && rm) await run(sb.from("roster").delete().eq("id", rm.id)); load()
+    })); if (ty == "removed" && $("u_rm").checked) { if (rm) await deleteWithAudit("roster", rm.id); else alert("No roster member matches \"" + nm + "\", so nobody was removed from the roster. The update was still logged.") } refresh(["roster_updates", "roster", "audit_log"])
 } else if (act == "rupdel") {
-    if (confirm("Delete this roster update?") && await deleteWithAudit("roster_updates", id)) load()
+    if (confirm("Delete this roster update?") && await deleteWithAudit("roster_updates", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "rosadd") {
     var o = {
         ign: g("r_ign"), discord: g("r_dc"), position: g("r_pos"), rank: g("r_rk"), joined: g("r_j") || null, notes: g("r_n")
     }; if (!o.ign) return alert("IGN is required"); var p = editR ? sb.from("roster").update(o).eq("id", editR): sb.from("roster").insert(o); if (await run(p)) {
-        editR = null; load()
+        editR = null; refresh(["roster"])
     }
 } else if (act == "rosedit") {
     editR = id; render(); scrollTo(0, 0)
 } else if (act == "roscancel") {
     editR = null; render()
 } else if (act == "rosdel") {
-    if (confirm("Remove from roster?") && await deleteWithAudit("roster", id)) load()
+    if (confirm("Remove from roster?") && await deleteWithAudit("roster", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "gotoapp") {
     hideSr(); view = "apps"; cur = id; render(); scrollTo(0, 0)
 } else if (act == "gotoloa") {
@@ -3454,7 +3447,7 @@ function init() {
         mode: "open"
     }); root.appendChild(document.getElementById("adm-tpl").content.cloneNode(true)); var lg = document.querySelector(".brand .logo"); LOGO = lg ? lg.src: ""; root.querySelectorAll("img.bi,img.bi2").forEach(i => {
         if (LOGO) i.src = LOGO; else i.remove()
-    }); $("si").innerHTML = ic("search"); applyCfg(); $("go").onclick = async() => {
+    }); $("si").innerHTML = ic("search"); $("mbtn").innerHTML = ic("menu", 20); applyCfg(); $("go").onclick = async() => {
         $("le").textContent = ""; if (!sb) {
             $("le").textContent = "Supabase keys missing"; return
         }
@@ -3496,6 +3489,7 @@ function init() {
         scrollTo(0, 0);
     }, true);
     root.addEventListener("click", onClick); root.addEventListener("input", onInput); root.addEventListener("change", e => {
+        if (e.target.id == "u_t" && $("u_rm")) $("u_rm").checked = e.target.value == "removed";
         if (e.target.id == "s_acc") render()
     }); $("gq").addEventListener("focus", () => {
         if ($("gq").value.trim()) $("sres").classList.remove("hide")
@@ -3505,11 +3499,17 @@ function init() {
         } else if (e.key == "Escape") $("sres").classList.add("hide")
     });
 }
+var poll = null;
 function enter() {
-    if (!root) init(); active = true; applyCfg(); check()
+    if (!root) init(); active = true; applyCfg(); check();
+    clearInterval(poll); poll = setInterval(async function() {
+        if (!active || $("app").classList.contains("hide") || document.hidden) return;
+        await refresh(["applications", "knowledge_tests"], true);
+        if (!cur && (view == "dash" || view == "apps") && !(root.activeElement && /INPUT|TEXTAREA/.test(root.activeElement.tagName))) render()
+    }, 30000)
 }
 function leave() {
-    active = false; document.title = T0
+    active = false; clearInterval(poll); document.title = T0
 }
 return {
     enter: enter, leave: leave
@@ -3986,7 +3986,7 @@ async function loadNews() {
             ascending: false
         }).order("created_at", {
             ascending: false
-        }).limit(8), sb.from("site_settings").select("*")]);
+        }).limit(6), sb.from("site_settings").select("*")]);
         if (r[2].data) {
             var s = {
         };
@@ -4054,30 +4054,42 @@ $("stf").addEventListener("submit", async function(e) {
         return
     }
 
-    var lab = d.status == "pending" ? "Under review" : d.status == "accepted" ? "Accepted" : "Not selected this time";
-    var auto = d.status == "pending"
-        ? "Your application is currently being reviewed by the Advisory Team. Please check this page again later for updates."
-        : d.status == "accepted"
-        ? "Your application has been accepted by the Advisory Team."
-        : "Your application was reviewed but was not selected this time.";
-
-    var base = '<h2 style="margin:0 0 6px">' + esc(lab) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' &middot; submitted ' + esc(fmt(d.submitted)) : '') + '</div><p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(d.note || auto) + '</p>';
+    var kt = null;
+    if (d.status == "pending") {
+        var kr = await sb.rpc("get_application_knowledge_test", { p_ref: c });
+        if (!kr.error && kr.data && kr.data[0]) kt = kr.data[0];
+    }
+    var stage = d.status != "pending" ? d.status : !kt ? "pending" : kt.status == "submitted" ? "final" : "ktest";
+    var LAB = { pending: "Under review", ktest: "Pending knowledge test", final: "Final review", accepted: "Accepted", rejected: "Not selected this time" };
+    var AUTO = {
+        pending: "Your application is currently being reviewed by the Advisory Team. Please check this page again later for updates.",
+        ktest: "Your application passed the first review. Please answer the knowledge test below. Your answers go straight to the Advisory Team.",
+        final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision.",
+        accepted: "Your application has been accepted by the Advisory Team.",
+        rejected: "Your application was reviewed but was not selected this time."
+    };
+    var STOCK = ["Your application is now under review by the Advisory Team. Please check your application status again later for updates.",
+        "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update.",
+        "Your application has been reviewed but was not selected this time. Please check your application status for the latest update.",
+        "Your application passed the first review. Please answer the knowledge test on the status page, then check back for updates.",
+        "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision."];
+    var custom = d.note && STOCK.indexOf(d.note) < 0 ? d.note : "";
+    var mk = function(s) {
+        return '<h2 style="margin:0 0 6px">' + esc(LAB[s]) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' &middot; submitted ' + esc(fmt(d.submitted)) : '') + '</div><p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(custom || AUTO[s]) + '</p>'
+    };
+    var base = mk(stage);
 
     if (d.status != "pending") {
         box.innerHTML = base;
         return
     }
 
-    var kt = await sb.rpc("get_application_knowledge_test", {
-        p_ref: c
-    });
-
-    if (kt.error || !kt.data || !kt.data[0]) {
+    if (!kt) {
         box.innerHTML = base;
         return
     }
 
-    var test = kt.data[0];
+    var test = kt;
     var questions = Array.isArray(test.questions) ? test.questions : [];
 
     if (test.status == "sent") {
@@ -4122,7 +4134,7 @@ $("stf").addEventListener("submit", async function(e) {
                     return
                 }
 
-                box.innerHTML = base + `<div class="c" style="margin-top:18px;text-align:left">
+                box.innerHTML = mk("final") + `<div class="c" style="margin-top:18px;text-align:left">
                     <h2 style="margin-top:0">Knowledge Test Submitted</h2>
                     <p style="margin:0">Your answers have been submitted successfully. The Advisory Team can now review your knowledge test before making a decision.</p>
                 </div>`;
