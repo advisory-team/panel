@@ -1325,7 +1325,7 @@ input:disabled {
   <div class="mmenu" id="mmenu" hidden>
     <a href="#what">What we do</a><a href="#look">What we look for</a><a href="#how">How it works</a>
     <a href="#news">Announcements</a><a href="#faq">Questions</a><a href="#loa">Leave of absence</a>
-    <a href="#status">Check application status</a><a class="hl2" href="#apply">Apply now</a>
+    <a href="#status">Check application status</a><a href="#resign">Resignation</a><a class="hl2" href="#apply">Apply now</a>
   </div>
 </header>
 
@@ -1422,6 +1422,10 @@ input:disabled {
       <div class="loa-strip" style="margin-top:16px">
         <div><h3>Already applied?</h3><p>Enter the reference code you got after submitting to see if your application is under review, accepted, or not selected.</p></div>
         <a class="btn g" href="#status">Check application status</a>
+      </div>
+      <div class="loa-strip" style="margin-top:16px">
+        <div><h3>Leaving the team?</h3><p>Submit a resignation so the Head Advisor and Director of Public Relations can process it.</p></div>
+        <a class="btn g" href="#resign">Submit a resignation</a>
       </div>
     </div>
   </section>
@@ -1530,6 +1534,27 @@ input:disabled {
   </div>
 </main>
 
+<!--  RESIGNATION  -->
+<main id="resign" hidden>
+  <div class="aw" id="rw">
+    <a class="back" href="#top">&larr; Back to overview</a>
+    <h1>Resignation Form</h1>
+    <p class="sub2">City of Manila Roleplay &middot; Advisory Team</p>
+    <div style="max-width:720px;margin:0 auto">
+      <div class="loa-reject" id="rmsg" role="alert" hidden style="margin-bottom:14px"><strong>Resignation not sent</strong><span></span></div>
+      <form class="c" id="rf" novalidate>
+        <p style="margin:0 0 20px;color:var(--mu);font-size:14.5px">Your resignation goes straight to the admin page.</p>
+        <div class="q" id="rq_n"><label class="l" for="r_n">Name <span class="req">*</span></label><input type="text" id="r_n" maxlength="80" autocomplete="off" autocorrect="off" spellcheck="false"></div>
+        <div class="q" id="rq_p"><label class="l" for="r_p">Position <span class="req">*</span></label><input type="text" id="r_p" maxlength="80" autocomplete="off"></div>
+        <div class="q" id="rq_r"><label class="l" for="r_r">Reason <span class="req">*</span></label><textarea id="r_r" maxlength="1000"></textarea><div class="cnt" id="r_c">0/1000</div></div>
+        <input class="hp" id="r_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn c" id="rgo" type="submit" style="width:100%;padding:14px">Submit resignation</button>
+      </form>
+      <div class="c ty" id="rdone" hidden></div>
+    </div>
+  </div>
+</main>
+
 <!-- ============ APPLICATION STATUS ============ -->
 <main id="stat" hidden>
   <div class="aw">
@@ -1547,6 +1572,12 @@ input:disabled {
 
 <!-- ADMIN  -->
 <div id="adm" hidden></div>
+<style id="resign-style">
+#resign{min-height:100svh;padding:118px 0 64px;background:radial-gradient(800px 360px at 50% -60px,rgba(38,212,230,.10),transparent 70%),var(--bg)}
+#rw{max-width:1200px;margin:0 auto;padding:0 18px}
+@media (max-width:900px){#resign{padding:108px 0 48px}#rw{padding:0 14px}}
+</style>
+
 <style id="knowledge-test-public-style">
 #kt_public_form {
     margin-top: 18px;
@@ -2188,10 +2219,15 @@ a[data-act] {
     background:var(--c)
 }
 .qg {
-    display:flex;
-    flex-direction:column;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+    align-items:stretch;
     gap:10px;
     margin-bottom:16px
+}
+.qg.ql {
+    display:flex;
+    flex-direction:column
 }
 .app-list {
     display:flex;
@@ -2200,7 +2236,7 @@ a[data-act] {
 }
 .app-row {
     display:grid;
-    grid-template-columns:minmax(250px,1.5fr) minmax(170px,.75fr) minmax(150px,.7fr) auto;
+    grid-template-columns:minmax(250px,1.5fr) 170px minmax(150px,.7fr) 190px;
     align-items:center;
     gap:18px;
     padding:16px 18px;
@@ -2239,11 +2275,11 @@ a[data-act] {
 .app-field-value {font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .app-status {display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
 .app-status i {width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--cb)}
-.app-actions {display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
-.app-actions .s,.app-actions .p {white-space:nowrap}
+.app-actions {display:flex;justify-content:flex-end;gap:7px;flex-wrap:nowrap}
+.app-actions .s,.app-actions .p {white-space:nowrap;flex:1 1 0;min-width:0;text-align:center;padding:10px 8px;font-size:13.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis}
 .app-tools {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .app-count {font-size:12px;color:var(--mu)}
-@media(max-width:980px){.app-row{grid-template-columns:minmax(220px,1.4fr) minmax(140px,.8fr) auto}.app-field.server{display:none}}
+@media(max-width:980px){.app-row{grid-template-columns:minmax(220px,1.4fr) 150px 170px}.app-field.server{display:none}}
 @media(max-width:700px){.app-row{grid-template-columns:1fr;gap:12px;padding:14px}.app-actions{justify-content:flex-start}.app-actions .s,.app-actions .p{flex:1}.app-field.server{display:block}.app-field{display:flex;gap:8px;align-items:center}.app-field-label{margin:0;min-width:54px}}
 .review-list{display:grid;border:1px solid var(--bd);border-radius:16px;overflow:hidden;background:var(--card)}
 .review-row{display:grid;grid-template-columns:minmax(180px,1.4fr) 140px 110px auto;gap:18px;align-items:center;padding:15px 18px;border-bottom:1px solid var(--bd);transition:.18s ease}
@@ -2289,12 +2325,12 @@ a[data-act] {
     backdrop-filter:blur(10px);
     border:1px solid var(--bd);
     border-top:3px solid var(--c);
-    border-radius:16px;
-    padding:16px;
+    border-radius:12px;
+    padding:11px 12px;
     cursor:pointer;
     display:flex;
     flex-direction:column;
-    box-shadow:0 -8px 22px -14px var(--c)
+    box-shadow:0 -6px 16px -14px var(--c)
 }
 .qc:hover {
     border-color:var(--c)
@@ -2316,15 +2352,48 @@ a[data-act] {
     text-transform:uppercase
 }
 .qc h3 {
-    margin:10px 0 0;
-    font-size:18px
+    margin:7px 0 0;
+    font-size:15px;
+    overflow-wrap:anywhere
+}
+.qc .mu {
+    font-size:12.5px;
+    margin-bottom:4px !important
+}
+.qc .tg {
+    font-size:10px;
+    padding:2px 7px
+}
+.qc .p,.qc .s {
+    padding:8px 10px;
+    font-size:12.5px;
+    line-height:1.2;
+    border-radius:9px;
+    flex:1 1 0;
+    min-width:0;
+    text-align:center;
+    white-space:nowrap
+}
+.qc .ab {
+    font-size:12px
+}
+.qc .ans {
+    height:68px;
+    max-height:68px;
+    overflow-y:auto;
+    box-sizing:border-box;
+    line-height:1.4
+}
+.qc > div:last-child:not(.ans):not(.ln) {
+    margin-top:auto;
+    padding-top:8px
 }
 .ln {
     display:flex;
     gap:10px;
-    padding:8px 0;
+    padding:4px 0;
     border-bottom:1px solid var(--bd);
-    font-size:14px;
+    font-size:13px;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis
@@ -2359,9 +2428,12 @@ a[data-act] {
     white-space:pre-wrap;
     background:var(--in);
     border:1px solid var(--bd);
-    padding:8px 10px;
-    border-radius:10px;
-    margin:4px 0 12px
+    padding:6px 9px;
+    border-radius:8px;
+    font-size:13px;
+    max-height:96px;
+    overflow:auto;
+    margin:4px 0 8px
 }
 .cm {
     border-left:3px solid var(--rd)
@@ -2565,7 +2637,7 @@ th {
     minmax(260px,1.45fr) 
     minmax(150px,.7fr) 
     minmax(150px,.8fr) 
-    auto;
+    230px;
     align-items:center;
     gap:18px;
     padding:16px 18px;
@@ -2676,7 +2748,28 @@ th {
 .roster-actions .s,
 .roster-actions .p {
     white-space: nowrap;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 13.5px;
+    line-height: 1.2;
 }
+.roster-actions .s,
+.roster-actions .ab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 13.5px;
+    white-space: nowrap
+}
+.roster-actions svg { flex: 0 0 auto }
 
 .roster-note-row {
     grid-column: 1 / -1;
@@ -2696,7 +2789,7 @@ th {
         grid-template-columns:
             minmax(220px, 1.3fr)
             minmax(140px, 0.7fr)
-            auto;
+            230px;
     }
 
     .roster-field.position {
@@ -2881,10 +2974,10 @@ const saveCfg = () => {
     }, light: {
         bg: "#eef1f7", sb: "#ffffff", card: "#ffffff", bd: "#dfe3ec", tx: "#1b1d2a", mu: "#5d6478", in: "#f6f7fa", chip: "#e9ecf3"
     }
-}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], ktests = [], isHead = true, editA = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
+}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
     var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
 }
-const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => !l.end_date || l.end_date >= today(); const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
+const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => l.status != "withdrawn" && (!l.end_date || l.end_date >= today()); const loaState = l => l.status == "withdrawn" ? "withdrawn" : activeLoa(l) ? "active" : "ended"; const loaCls = { active: "s-active", ended: "s-ended", withdrawn: "s-warn" }; const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
     var n = infN(m); return `<span class="tg ${n>=INF_WARN?"s-rejected":n?"s-warn":"s-active"}">${n}</span>${n>=INF_WARN?' <span class="er" title="Review needed">&#9888;</span>':""}`
 }; const stOf = r => r.status || "pending";
 const stageOf = r => { var s = stOf(r); if (s != "pending") return s; var t = ktests.find(x => String(x.application_id) == String(r.id)); return !t ? "pending" : t.status == "submitted" ? "final" : "ktest" };
@@ -2923,7 +3016,7 @@ async function check() {
         if (!me) me = (u.email || "").split("@")[0].split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
     $("login").classList.toggle("hide", !!ses); $("app").classList.toggle("hide", !ses); host.classList.toggle("nohead", !isHead); if (ses) {
-        $("pname").textContent = me; var md2 = ses.user.user_metadata || {}; window.__advAdminRole = (md2.role_name || "").trim(); var rk = (ses.user.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_")); $("prole").textContent = (md2.role_name || "").trim() || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin")); $("av").textContent = me.charAt(0).toUpperCase(); load()
+        $("pname").textContent = me; var md2 = ses.user.user_metadata || {}; window.__advAdminRole = (md2.role_name || "").trim(); window.__advAdminEmail = (ses.user.email || "").toLowerCase(); var rk = (ses.user.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_")); $("prole").textContent = (md2.role_name || "").trim() || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin")); $("av").textContent = me.charAt(0).toUpperCase(); load()
     }
 }
 //  data
@@ -2937,14 +3030,15 @@ const Q = {
     roster_updates: () => sb.from("roster_updates").select("*").order("effective_on", { ascending: false }).order("created_at", { ascending: false }),
     knowledge_tests: () => sb.from("knowledge_tests").select("*").order("created_at", { ascending: false }),
     site_settings: () => sb.from("site_settings").select("*"),
+    resignations: () => sb.from("resignations").select("*").order("created_at", { ascending: false }),
     audit_log: () => sb.from("audit_log").select("*").order("created_at", { ascending: false }).limit(100)
 };
 const SET = {
     applications: d => rows = d, comments: d => cm = d, loa: d => loa = d, roster: d => ros = d, infractions: d => inf = d,
-    announcements: d => ann = d, roster_updates: d => rup = d, knowledge_tests: d => ktests = d, audit_log: d => aud = d,
+    announcements: d => ann = d, roster_updates: d => rup = d, knowledge_tests: d => ktests = d, audit_log: d => aud = d, resignations: d => resg = d,
     site_settings: d => { site = {}; d.forEach(x => { site[x.key] = x.value }) }
 };
-const LOCAL = { applications: () => rows, comments: () => cm, loa: () => loa, roster: () => ros, infractions: () => inf, announcements: () => ann, roster_updates: () => rup };
+const LOCAL = { applications: () => rows, comments: () => cm, loa: () => loa, roster: () => ros, infractions: () => inf, announcements: () => ann, roster_updates: () => rup, resignations: () => resg };
 // Fetch only the tables that changed, in parallel. quiet = update data without re-rendering.
 async function refresh(tables, quiet) {
     var all = Object.keys(Q); tables = tables || all;
@@ -2957,10 +3051,10 @@ async function refresh(tables, quiet) {
 async function load() { return refresh() }
 // render 
 function navHtml() {
-    var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
+    var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("loah", "LOA History", "", 0, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("res", "Resignations", "", resg.filter(r => (r.status || "pending") == "pending").length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
 }
 function render() {
-    $("nav").innerHTML = navHtml(); var p = needN(); $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
+    $("nav").innerHTML = navHtml(); var p = needN(); $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
 }
 function pills() {
     return `<div class="pills">${["all","pending","ktest","final","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.length:cnt(c)})</button>`).join("")}</div>`;
@@ -2989,7 +3083,7 @@ function vDash() {
 
 function vApps() {
     var f = rows.filter(r => filt == "all" || stageOf(r) == filt);
-    return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
+    return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg ql">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
 }
 function knowledgeTestFor(appId) {
     return ktests.find(x => String(x.application_id) == String(appId)) || null
@@ -3124,13 +3218,39 @@ function vDetail() {
 }
 
 function vLoa() {
-    var cards = loa.map(l => {
-        var on = activeLoa(l); return `<div class="qc s-${on?"active":"ended"}" style="cursor:default"><div class="top2"><span class="tg">${on?"active":"ended"}</span><button class="ab dl sm" data-act="loadel" data-id="${l.id}" title="Delete LOA">${ic("trash",15)}Delete</button></div><h3>${esc(l.ign)}</h3><div class="mu" style="margin-bottom:8px">${esc(l.discord)}</div><div class="ln"><span>From</span>${esc(l.start_date)}</div><div class="ln"><span>Until</span>${esc(l.end_date||"open")}</div><div class="ans" style="margin:10px 0 0">${esc(l.reason||"-")}</div></div>`
-    }).join(""); return `<h1>Leave of Absence</h1><p class="sub">Staff who are away or on record</p><div class="card"><h2>Add LOA</h2><div class="g"><input id="l_ign" placeholder="IGN"><input id="l_dc" placeholder="Discord"><label class="mu">Start<input id="l_s" type="date" value="${today()}"></label><label class="mu">End (optional)<input id="l_e" type="date"></label></div><textarea id="l_r" placeholder="Reason"></textarea><button class="p" data-act="loaadd">Add LOA</button></div>` + (loa.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">No LOA records.</div>`);
+    var cards = loa.filter(activeLoa).map(l => {
+        var st = loaState(l); return `<div class="qc ${loaCls[st]}" style="cursor:default"><div class="top2"><span class="tg">${st}</span><button class="ab dl sm" data-act="loadel" data-id="${l.id}" title="Delete LOA">${ic("trash",15)}Delete</button></div><h3>${esc(l.ign)}</h3><div class="mu" style="margin-bottom:8px">${esc(l.discord)}</div><div class="ln"><span>From</span>${esc(l.start_date)}</div><div class="ln"><span>Until</span>${esc(l.end_date||"open")}</div><div class="ans" style="margin:6px 0 0">${esc(l.reason||"-")}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="p" data-act="loaset" data-id="${l.id}" data-v="withdrawn">Mark withdrawn</button></div></div>`
+    }).join(""); return `<h1>Leave of Absence</h1><p class="sub">Staff who are currently away. Expired and withdrawn LOA move to LOA History.</p><div class="card"><h2>Add LOA</h2><div class="g"><input id="l_ign" placeholder="IGN"><input id="l_dc" placeholder="Discord"><label class="mu">Start<input id="l_s" type="date" value="${today()}"></label><label class="mu">End (optional)<input id="l_e" type="date"></label></div><textarea id="l_r" placeholder="Reason"></textarea><button class="p" data-act="loaadd">Add LOA</button></div>` + (cards ? `<div class="qg">${cards}</div>`: `<div class="card mu">No active LOA. Past and withdrawn records are in LOA History.</div>`);
+}
+function vLoaH() {
+    var mon = d => (d || "").slice(0, 7), subm = l => mon(l.created_at || l.start_date) || "0000-00", key = l => (l.ign || "").trim().toLowerCase();
+    var hist = loa.filter(l => !activeLoa(l)), months = {}; hist.forEach(l => (months[subm(l)] = months[subm(l)] || []).push(l));
+    var totalBy = {}; loa.forEach(l => { var k = key(l); totalBy[k] = (totalBy[k] || 0) + 1 });
+    var out = Object.keys(months).sort().reverse().map(m => {
+        var label = m == "0000-00" ? "Unknown date" : new Date(m + "-01T00:00:00").toLocaleString("en", { month: "long", year: "numeric" });
+        var all = loa.filter(l => subm(l) == m), people = {}; all.forEach(l => people[key(l)] = (people[key(l)] || 0) + 1);
+        var g = {}; months[m].forEach(l => (g[key(l)] = g[key(l)] || []).push(l));
+        var names = Object.keys(g).sort((x, y) => (people[y] || 0) - (people[x] || 0) || x.localeCompare(y));
+        var cards = names.map(k => {
+            var items = g[k], f = items[0], c = people[k] || 0;
+            var rows = items.map(l => { var st = loaState(l); return `<div class="ln" style="white-space:normal;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px"><span style="min-width:0;font-weight:400;color:inherit">${esc(l.start_date || "")} &rarr; ${esc(l.end_date || "open")}</span><span style="display:flex;gap:6px;align-items:center;min-width:0"><span class="tg ${loaCls[st]}" style="min-width:0">${st}</span></span>${l.reason ? `<span class="mu" style="flex-basis:100%;min-width:0;font-weight:400;font-size:12px;color:inherit;opacity:.7">${esc(l.reason)}</span>` : ""}</div>` }).join("");
+            return `<div class="qc s-ended" style="cursor:default"><div class="top2"><span class="tg s-active">${c} this month</span><span class="mu">${totalBy[k]} total</span></div><h3>${esc(f.ign)}</h3><div class="mu">${esc(f.discord || "-")}</div><div class="ans" style="height:auto;max-height:150px;padding:2px 8px">${rows}</div></div>`
+        }).join("");
+        var n = Object.keys(people).length;
+        return `<div style="display:flex;align-items:center;gap:12px;margin:22px 0 12px"><b style="font-size:15px;white-space:nowrap">${esc(label)}</b><span class="mu" style="white-space:nowrap">${all.length} LOA &bull; ${n} member${n == 1 ? "" : "s"}</span><span style="flex:1;height:1px;background:var(--bd)"></span></div><div class="qg">${cards}</div>`
+    }).join("");
+    return `<h1>LOA History</h1><p class="sub">Expired and withdrawn LOA, grouped by month with the newest month on top. Each card shows how many LOA that member submitted that month.</p>` + (out || `<div class="card mu">No expired or withdrawn LOA yet.</div>`);
+}
+function vRes() {
+    var lab = { pending: "new", acknowledged: "acknowledged", processed: "processed" }, cls = { pending: "s-pending", acknowledged: "s-warn", processed: "s-active" };
+    var cards = resg.map(r => {
+        var st = r.status || "pending";
+        return `<div class="qc ${cls[st] || "s-pending"}" style="cursor:default"><div class="top2"><span class="tg">${lab[st] || st}</span><button class="ab dl sm" data-act="resdel" data-id="${r.id}" title="Delete resignation">${ic("trash",15)}Delete</button></div><h3>${esc(r.name)}</h3><div class="mu" style="margin-bottom:8px">${esc(r.position || "-")}</div><div class="ln"><span>Submitted</span>${esc(fmt(r.created_at))}</div><div class="ans" style="margin:6px 0 0">${esc(r.reason || "-")}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${st != "acknowledged" && st != "processed" ? `<button class="p" data-act="resset" data-id="${r.id}" data-v="acknowledged">Acknowledge</button>` : ""}${st != "processed" ? `<button class="p" data-act="resset" data-id="${r.id}" data-v="processed">Mark processed</button>` : `<button class="s" data-act="resset" data-id="${r.id}" data-v="pending">Reopen</button>`}</div></div>`
+    }).join(""); return `<h1>Resignations</h1><p class="sub">Resignations submitted from the landing page</p>` + (resg.length ? `<div class="qg">${cards}</div>` : `<div class="card mu">No resignations yet.</div>`);
 }
 function vInf() {
     var opts = ros.slice().sort((a, b) => (a.ign || "").localeCompare(b.ign || "")).map(m => `<option value="${m.id}">${esc(m.ign)}${m.position?" - "+esc(m.position):""}</option>`).join(""); var cards = inf.map(i => {
-        var on = activeInf(i); return `<div class="qc s-${on?"active":"ended"}" style="cursor:default"><div class="top2"><span class="tg">${on?"active":"expired"}</span><button class="ab dl sm" data-act="infdel" data-id="${i.id}" title="Delete infraction">${ic("trash",15)}Delete</button></div><h3>${esc(i.ign)}</h3><div class="mu" style="margin-bottom:8px">Issued by ${esc(i.issued_by||"-")}</div><div class="ln"><span>Issued</span>${esc(i.issued_on)}</div><div class="ln"><span>Expires</span>${esc(i.expires_on||"Never")}</div><div class="ans" style="margin:10px 0 0">${esc(i.reason)}</div></div>`
+        var on = activeInf(i); return `<div class="qc s-${on?"active":"ended"}" style="cursor:default"><div class="top2"><span class="tg">${on?"active":"expired"}</span><button class="ab dl sm" data-act="infdel" data-id="${i.id}" title="Delete infraction">${ic("trash",15)}Delete</button></div><h3>${esc(i.ign)}</h3><div class="mu" style="margin-bottom:8px">Issued by ${esc(i.issued_by||"-")}</div><div class="ln"><span>Issued</span>${esc(i.issued_on)}</div><div class="ln"><span>Expires</span>${esc(i.expires_on||"Never")}</div><div class="ans" style="margin:6px 0 0">${esc(i.reason)}</div></div>`
     }).join(""); return `<h1>Infractions</h1><p class="sub">Warnings and strikes for roster members</p>
  <div class="card"><h2>Issue infraction</h2>
  ${ros.length?"":'<p class="mu">Roster is empty. Add members first.</p>'}
@@ -3142,7 +3262,7 @@ function vInf() {
 function vAnn() {
     var e = ann.find(x => x.id == editA) || {
 }; var cards = ann.map(a => {
-    var exp = a.expires_on && a.expires_on < today(); return `<div class="qc s-${exp?"ended":"active"}" style="cursor:default"><div class="top2"><span class="tg">${exp?"expired":a.pinned?"pinned":"live"}</span><div class="acts"><button class="ab" data-act="annedit" data-id="${a.id}" title="Edit">${ic("edit",15)}Edit</button><button class="ab dl sm" data-act="anndel" data-id="${a.id}" title="Delete announcement">${ic("trash",15)}Delete</button></div></div><h3>${esc(a.title)}</h3><div class="mu" style="margin-bottom:8px">${esc(a.author||"-")} &bull; ${esc(fmt(a.created_at))}${a.expires_on?` &bull; until ${esc(a.expires_on)}`:""}</div><div class="ans" style="margin:10px 0 0">${esc(a.body)}</div></div>`
+    var exp = a.expires_on && a.expires_on < today(); return `<div class="qc s-${exp?"ended":"active"}" style="cursor:default"><div class="top2"><span class="tg">${exp?"expired":a.pinned?"pinned":"live"}</span><div class="acts"><button class="ab" data-act="annedit" data-id="${a.id}" title="Edit">${ic("edit",15)}Edit</button><button class="ab dl sm" data-act="anndel" data-id="${a.id}" title="Delete announcement">${ic("trash",15)}Delete</button></div></div><h3>${esc(a.title)}</h3><div class="mu" style="margin-bottom:8px">${esc(a.author||"-")} &bull; ${esc(fmt(a.created_at))}${a.expires_on?` &bull; until ${esc(a.expires_on)}`:""}</div><div class="ans" style="margin:6px 0 0">${esc(a.body)}</div></div>`
 }).join(""); return `<h1>Announcements</h1><p class="sub">Posts show on the landing page: pinned first, then newest. Expired ones are hidden. The top 3 are displayed.</p>
  <div class="card"><h2>${editA?"Edit announcement":"Post announcement"}</h2><input id="a_t" placeholder="Title" maxlength="120" value="${esc(e.title)}"><textarea id="a_b" placeholder="Message">${esc(e.body)}</textarea>
  <div class="g"><label class="mu">Hide after (optional)<input id="a_e" type="date" value="${esc(e.expires_on)}"></label>
@@ -3157,13 +3277,13 @@ function vAud() {
         var r = a.row_data || {
     }, x = r.answers || {
 }; return r.ign || x.ign || r.title || (r.body || "").slice(0, 40) || "-"
-}; var cards = aud.map(a => `<div class="qc s-rejected" style="cursor:default"><div class="top2"><span class="tg">${esc(a.tbl)}</span><button class="ab hd" data-act="audrestore" data-id="${a.id}">Restore</button></div><h3>${esc(lbl(a))}</h3><div class="mu">Deleted by ${esc(a.actor||"-")} &bull; ${esc(fmt(a.created_at))}</div></div>`).join(""); return `<h1>Audit Log</h1><p class="sub">Everything that was deleted, and who did it. Head admins can restore items. Latest 100.</p>` + (aud.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">Nothing deleted yet.</div>`);
+}; var own = window.__advAdminEmail === "rio@gmail.com"; var cards = aud.map(a => `<div class="qc s-rejected" style="cursor:default"><div class="top2"><span class="tg">${esc(a.tbl)}</span><span style="display:flex;gap:6px"><button class="ab hd" data-act="audrestore" data-id="${a.id}">Restore</button>${own ? `<button class="ab dl sm" data-act="auddel" data-id="${a.id}" title="Permanently delete this log entry">${ic("trash",15)}Delete</button>` : ""}</span></div><h3>${esc(lbl(a))}</h3><div class="mu">Deleted by ${esc(a.actor||"-")} &bull; ${esc(fmt(a.created_at))}</div></div>`).join(""); return `<h1>Audit Log</h1><p class="sub">Everything that was deleted, and who did it. Head admins can restore items. Latest 100.${own ? " The owner can permanently delete log entries." : ""}</p>` + (own && aud.length ? `<div style="margin-bottom:14px"><button class="ab dl" data-act="audclear">${ic("trash",15)}Clear all logs</button></div>` : "") + (aud.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">Nothing deleted yet.</div>`);
 }
 function vRup() {
     var names = ros.map(m => `<option value="${esc(m.ign)}"></option>`).join(""); var T = {
         promotion: ["Promotion", "s-active"], joined: ["Joined", "s-active"], demotion: ["Demotion", "s-warn"], removed: ["Removed", "s-rejected"], other: ["Update", "s-pending"]
     }; var cards = rup.map(u => {
-        var t = T[u.type] || T.other; return `<div class="qc ${t[1]}" style="cursor:default"><div class="top2"><span class="tg">${t[0]}</span><button class="ab dl sm" data-act="rupdel" data-id="${u.id}" title="Delete update">${ic("trash",15)}Delete</button></div><h3>${esc(u.ign)}</h3><div class="mu" style="margin-bottom:8px">By ${esc(u.issued_by||"-")}</div><div class="ln"><span>Date</span>${esc(u.effective_on||"")}</div><div class="ans" style="margin:10px 0 0">${esc(u.details||"-")}</div></div>`
+        var t = T[u.type] || T.other; return `<div class="qc ${t[1]}" style="cursor:default"><div class="top2"><span class="tg">${t[0]}</span><button class="ab dl sm" data-act="rupdel" data-id="${u.id}" title="Delete update">${ic("trash",15)}Delete</button></div><h3>${esc(u.ign)}</h3><div class="mu" style="margin-bottom:8px">By ${esc(u.issued_by||"-")}</div><div class="ln"><span>Date</span>${esc(u.effective_on||"")}</div><div class="ans" style="margin:6px 0 0">${esc(u.details||"-")}</div></div>`
     }).join(""); return `<h1>Roster Updates</h1><p class="sub">Promotions, demotions, removals. These show on the landing page (latest 6).</p>
  <div class="card"><h2>Log roster update</h2>
  <datalist id="u_names">${names}</datalist>
@@ -3183,11 +3303,11 @@ function vRoster() {
         return `<article class="roster-row s-${n>=INF_WARN ? "rejected" : hasInf ? "warn" : "active"}" data-act="rosedit" data-id="${m.id}">
             <div class="roster-main">
                 <div class="roster-avatar" aria-hidden="true">${ic("user",22)}</div>
-                <div style="min-width:0"><div class="roster-name">${esc(m.ign || "Unnamed member")}</div><div class="roster-meta">${esc(m.discord || "No Discord username")} &bull; ${esc(m.rank || "Member")}</div></div>
+                <div style="min-width:0"><div class="roster-name">${esc(m.ign || "Unnamed member")}</div><div class="roster-meta">${esc(m.discord || "No Discord username")} &bull; ${esc(m.rank || "Member")}${n ? ` &bull; <b style="color:var(--c)">${n} infraction${n==1?"":"s"}</b>` : ""}</div></div>
             </div>
             <div class="roster-field"><div class="roster-field-label">Position</div><div class="roster-field-value">${esc(m.position || "Advisory Team")}</div></div>
             <div class="roster-field position"><div class="roster-field-label">Joined</div><div class="roster-field-value">${esc(m.joined || "—")}</div></div>
-            <div class="roster-actions"><span class="roster-status"><i></i>${n ? `${n} infraction${n==1?"":"s"}` : "Active"}</span><button class="s" data-act="rosedit" data-id="${m.id}">${ic("edit",15)}Edit</button><button class="ab dl" data-act="rosdel" data-id="${m.id}" title="Remove from roster">${ic("trash",15)}Delete</button></div>
+            <div class="roster-actions"><button class="s" data-act="rosedit" data-id="${m.id}">${ic("edit",15)}Edit</button><button class="ab dl" data-act="rosdel" data-id="${m.id}" title="Remove from roster">${ic("trash",15)}Delete</button></div>
             ${m.notes ? `<div class="roster-note-row"><b>Notes:</b> ${esc(m.notes)}</div>` : ""}
         </article>`;
     }).join("");
@@ -3203,7 +3323,7 @@ function searchHtml(q) {
     var a = r.answers || {
 }, st = stOf(r); return `<div class="row" data-act="gotoapp" data-id="${r.id}"><div><b>${esc(a.ign)}</b> <span class="mu">${esc(a.discord)}</span></div><span class="tg s-${st}">${st}</span></div>`
 }) + sec("LOA", L, l => {
-    var on = activeLoa(l); return `<div class="row" data-act="gotoloa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.start_date)} &rarr; ${esc(l.end_date||"open")}</span></div><span class="tg s-${on?"active":"ended"}">${on?"active":"ended"}</span></div>`
+    var st = loaState(l); return `<div class="row" data-act="gotoloa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.start_date)} &rarr; ${esc(l.end_date||"open")}</span></div><span class="tg ${loaCls[st]}">${st}</span></div>`
 }) + sec("Roster", R, m => `<div class="row" data-act="gotoros"><div><b>${esc(m.ign)}</b> <span class="mu">${esc(m.discord)}</span></div><span class="mu">${esc(m.position)} ${esc(m.rank)}</span></div>`); return h || `<div class="mu" style="padding:8px 0">No results for "${esc(q)}".</div>`;
 }
 function csv() {
@@ -3325,6 +3445,14 @@ const hideSr = () => {
     if (!g("l_ign")) return alert("IGN is required"); if (await run(sb.from("loa").insert({
         ign: g("l_ign"), discord: g("l_dc"), start_date: g("l_s") || null, end_date: g("l_e") || null, reason: g("l_r")
     }))) refresh(["loa"])
+} else if (act == "resset") {
+    if (await run(sb.from("resignations").update({ status: v }).eq("id", id))) refresh(["resignations"])
+} else if (act == "resdel") {
+    if (confirm("Delete this resignation?") && await deleteWithAudit("resignations", id)) (render(), refresh(["audit_log"], true))
+} else if (act == "loaset") {
+    var lr = await sb.from("loa").update({ status: v || null }).eq("id", id).select("id");
+    if (lr.error) return alert(lr.error.message.indexOf("status") > -1 ? "Run loa_withdrawn.sql in Supabase first (adds the status column)." : lr.error.message);
+    refresh(["loa"])
 } else if (act == "loadel") {
     if (confirm("Delete this LOA?") && await deleteWithAudit("loa", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "infadd") {
@@ -3355,6 +3483,20 @@ const hideSr = () => {
     }))) {
         alert("Saved"); refresh(["site_settings"])
     }
+} else if (act == "auddel") {
+    if (window.__advAdminEmail !== "rio@gmail.com") return alert("Only the owner can delete audit logs.");
+    if (!confirm("Permanently delete this log entry? It can no longer be restored.")) return;
+    var dr = await sb.from("audit_log").delete().eq("id", id).select("id");
+    if (dr.error) return alert(dr.error.message);
+    if (!dr.data || !dr.data.length) return alert("Not deleted. Run audit_log_owner.sql in Supabase so the database allows it.");
+    aud = aud.filter(x => String(x.id) != String(id)); render()
+} else if (act == "audclear") {
+    if (window.__advAdminEmail !== "rio@gmail.com") return alert("Only the owner can delete audit logs.");
+    if (!confirm("Permanently delete ALL " + aud.length + " audit log entries? This cannot be undone.")) return;
+    var ids = aud.map(x => x.id), cr = await sb.from("audit_log").delete().in("id", ids).select("id");
+    if (cr.error) return alert(cr.error.message);
+    if (!cr.data || !cr.data.length) return alert("Not deleted. Run audit_log_owner.sql in Supabase so the database allows it.");
+    refresh(["audit_log"], true)
 } else if (act == "audrestore") {
     var au = aud.find(x => x.id == id); if (!au) return; if (!confirm("Restore this " + au.tbl + " entry?")) return; if (await run(sb.from(au.tbl).insert(au.row_data))) {
         await sb.from("audit_log").delete().eq("id", id); load()
@@ -3466,7 +3608,7 @@ function init() {
                 $("login").classList.add("hide"); $("app").classList.remove("hide");
                 host.classList.toggle("nohead", !isHead);
                 $("pname").textContent = me;
-                window.__advAdminRole = (md.role_name || "").trim();
+                window.__advAdminRole = (md.role_name || "").trim(); window.__advAdminEmail = (u.email || "").toLowerCase();
                 var rk = (u.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_"));
                 $("prole").textContent = window.__advAdminRole || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin"));
                 $("av").textContent = me.charAt(0).toUpperCase();
@@ -3932,6 +4074,30 @@ $("lf").addEventListener("submit", async function(ev) {
         resetLoa(); $("loa-note").hidden = false; $("ldone").hidden = true; $("lf").hidden = false; window.scrollTo(0, 0)
     };
 });
+/* Resignation form */
+(function() {
+    var f = $("rf"); if (!f) return;
+    function rshow(m, id) { var e = $("rmsg"); e.hidden = false; e.querySelector("span").textContent = m; if (id) { var q = $(id); q.classList.add("bad"); q.scrollIntoView({ behavior: "smooth", block: "center" }) } }
+    function rhide() { $("rmsg").hidden = true; document.querySelectorAll("#rf .q.bad").forEach(function(e) { e.classList.remove("bad") }) }
+    $("r_r").addEventListener("input", function() { $("r_c").textContent = this.value.length + "/1000" });
+    f.addEventListener("input", rhide);
+    f.addEventListener("submit", async function(ev) {
+        ev.preventDefault(); if ($("r_hp").value) return; rhide();
+        var n = $("r_n").value.trim(), p = $("r_p").value.trim(), r = $("r_r").value.trim();
+        if (!n) return rshow("Enter your name.", "rq_n");
+        if (!p) return rshow("Enter your position.", "rq_p");
+        if (!r) return rshow("Add a reason for your resignation.", "rq_r");
+        if (!sb) return rshow("Can't reach the server. Try again later.");
+        var btn = $("rgo"); btn.disabled = true; btn.textContent = "Submitting...";
+        var res = await sb.from("resignations").insert({ name: n, position: p, reason: r });
+        btn.disabled = false; btn.textContent = "Submit resignation";
+        if (res.error) return rshow("Your resignation was not sent: " + res.error.message);
+        $("rdone").innerHTML = '<div class="ck">&#10003;</div><h1>Resignation submitted</h1><p>It now appears on the admin page. The Head Advisor and Director of Public Relations will process it.</p><div class="sum"><div><span>Name</span><b>' + esc(n) + '</b></div><div><span>Position</span><b>' + esc(p) + '</b></div></div><div class="row"><a class="btn w" href="#top">Back to overview</a></div>';
+        f.hidden = true; $("rmsg").hidden = true; $("rdone").hidden = false; window.scrollTo(0, 0);
+        f.reset(); $("r_c").textContent = "0/1000";
+    });
+    window.addEventListener("hashchange", function() { if (location.hash === "#resign") { f.hidden = false; $("rdone").hidden = true } });
+})();
 /* -Announcements, roster updates, site settings (public)*/
 var UT = {
     promotion: "Promotion",
@@ -4169,6 +4335,8 @@ var SITE = [{
 }, {
     t: "File a leave of absence", d: "Going inactive? Let the team know", k: "leave absence loa inactive away vacation", h: "#loa"
 }, {
+    t: "Submit a resignation", d: "Leaving the team? File your resignation", k: "resign resignation quit leave step down", h: "#resign"
+}, {
     t: "What an Advisor does", d: "Guide newcomers, answer questions, support staff", k: "duties responsibilities advisor role guide help job", h: "#what"
 }, {
     t: "What we look for", d: "Commitment, accountability, fairness, professionalism", k: "requirements traits qualities criteria", h: "#look"
@@ -4237,11 +4405,13 @@ function route() {
     isApply = h === "#apply",
     isLoa = h === "#loa",
     isStat = h === "#status",
+    isRes = h === "#resign",
     isAdm = h === SECRET;
-    $("landing").hidden = isApply || isLoa || isStat || isAdm;
+    $("landing").hidden = isApply || isLoa || isStat || isRes || isAdm;
     $("apply").hidden = !isApply;
     $("loa").hidden = !isLoa;
     $("stat").hidden = !isStat;
+    $("resign").hidden = !isRes;
     $("adm").hidden = !isAdm;
     document.querySelector(".nav").hidden = isAdm;
     $("navcta").style.visibility = isApply ? "hidden": "visible";
@@ -4251,7 +4421,7 @@ function route() {
     }
     $("mmenu").hidden = true;
     if (!isAdm) loadNews();
-    if (isApply || isLoa || isStat || isAdm) {
+    if (isApply || isLoa || isStat || isRes || isAdm) {
         window.scrollTo(0, 0)
     } else {
         var id = location.hash.slice(1),
