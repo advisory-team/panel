@@ -1325,7 +1325,7 @@ input:disabled {
   <div class="mmenu" id="mmenu" hidden>
     <a href="#what">What we do</a><a href="#look">What we look for</a><a href="#how">How it works</a>
     <a href="#news">Announcements</a><a href="#faq">Questions</a><a href="#loa">Leave of absence</a>
-    <a href="#status">Check application status</a><a href="#resign">Resignation</a><a class="hl2" href="#apply">Apply now</a>
+    <a href="#status">Check application status</a><a href="#edit">Edit application</a><a href="#resign">Resignation</a><a class="hl2" href="#apply">Apply now</a>
   </div>
 </header>
 
@@ -1422,6 +1422,10 @@ input:disabled {
       <div class="loa-strip" style="margin-top:16px">
         <div><h3>Already applied?</h3><p>Enter the reference code you got after submitting to see if your application is under review, accepted, or not selected.</p></div>
         <a class="btn g" href="#status">Check application status</a>
+      </div>
+      <div class="loa-strip" style="margin-top:16px">
+        <div><h3>Need to edit your application?</h3><p>Only for applicants the Advisory Team has permitted. You need your reference code and the edit code an admin gave you.</p></div>
+        <a class="btn g" href="#edit">Edit my application</a>
       </div>
       <div class="loa-strip" style="margin-top:16px">
         <div><h3>Leaving the team?</h3><p>Submit a resignation so the Head Advisor and Director of Public Relations can process it.</p></div>
@@ -1571,6 +1575,33 @@ input:disabled {
 </main>
 
 <!-- ADMIN  -->
+<style id="edit-style">
+#edit{min-height:100svh;padding:118px 0 64px;background:radial-gradient(800px 360px at 50% -60px,rgba(38,212,230,.10),transparent 70%),var(--bg)}
+.emsg{border-radius:12px;padding:13px 14px;margin:0 0 12px;border:1px solid var(--er);color:var(--er);background:rgba(255,107,120,.08);font-size:14.5px}
+.qhint{color:var(--mu);font-size:13.5px;margin:0 0 10px}
+.qimg{display:block;max-width:100%;height:auto;border-radius:12px;border:1px solid var(--bd2);margin:0 0 12px}
+@media (max-width:900px){#edit{padding:108px 20px 48px}}
+</style>
+<main id="edit" hidden>
+  <div class="aw" id="ew">
+    <a class="back" href="#top">&larr; Back to overview</a>
+    <h1>Edit your application</h1>
+    <p class="sub2">Only available to applicants the Advisory Team has permitted.</p>
+    <form class="c" id="ef1" novalidate>
+      <div class="q"><label class="l" for="e_ref">Reference code</label><input type="text" id="e_ref" placeholder="ADV-XXXXXX" maxlength="12" autocomplete="off" autocapitalize="characters"></div>
+      <div class="q"><label class="l" for="e_code">Edit code from an admin</label><input type="text" id="e_code" placeholder="EDIT-XXXXXX" maxlength="12" autocomplete="off" autocapitalize="characters"></div>
+      <div class="emsg" id="e_msg1" role="alert" hidden></div>
+      <button class="btn c" id="e_open" type="submit" style="width:100%;padding:14px">Open my application</button>
+    </form>
+    <div id="ef2" hidden>
+      <div class="c"><h2>Update your answers</h2><p class="mu" style="margin:0">Change what you need, then save. Your edit code works only once.</p></div>
+      <div id="e_fields"></div>
+      <div class="emsg" id="e_msg2" role="alert" hidden></div>
+      <button class="btn c" id="e_save" type="button" style="width:100%;padding:14px">Save changes</button>
+    </div>
+    <div class="c ty" id="e_done" hidden></div>
+  </div>
+</main>
 <div id="adm" hidden></div>
 <style id="resign-style">
 #resign{min-height:100svh;padding:118px 0 64px;background:radial-gradient(800px 360px at 50% -60px,rgba(38,212,230,.10),transparent 70%),var(--bg)}
@@ -3163,6 +3194,18 @@ function knowledgeTestCard(r) {
     </div>`;
 }
 
+function mkEditCode() {
+    var c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", a = new Uint8Array(6), s = "";
+    crypto.getRandomValues(a);
+    for (var i = 0; i < 6; i++) s += c[a[i] % c.length];
+    return "EDIT-" + s
+}
+function editCard(r) {
+    var out = "";
+    if (r.edited_at) out += `<div class="card" style="margin-bottom:16px"><b>Edited by the applicant</b><div class="mu" style="margin-top:4px">${esc(fmt(r.edited_at))}. The answers below are the updated version.</div></div>`;
+    if (r.edit_allowed && r.edit_code) out += `<div class="card" style="margin-bottom:16px"><div class="qh" style="margin:0"><div><h2 style="margin-bottom:4px">Edit access</h2><p class="sub" style="margin:0">Send this code to the applicant. They enter it with their reference code on the "Edit my application" page. It works once.</p></div><span class="tg s-active">Active</span></div><div style="margin:14px 0;font-size:26px;font-weight:800;letter-spacing:3px">${esc(r.edit_code)}</div><div class="bar" style="margin:0"><button class="s" data-act="copyeditcode">Copy code</button><button class="s" data-act="neweditcode">New code</button><button class="s dn" data-act="revokeedit">Revoke</button></div></div>`;
+    return out
+}
 function vDetail() {
     var r = rows.find(x => x.id == cur);
     if (!r) {
@@ -3186,11 +3229,13 @@ function vDetail() {
             <button class="p ${!canAccept && st!="accepted" ? "disabled" : ""}" data-act="status" data-v="accepted"${!canAccept && st!="accepted" ? ' disabled title="Knowledge test must be submitted first"' : ""}>Accepted</button>
             <button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button>
             <button class="s" data-act="toroster">+ Add to roster</button>
+            ${st == "pending" && !(r.edit_allowed && r.edit_code) ? `<button class="s" data-act="allowedit">Allow applicant to edit</button>` : ""}
             <button class="ab dl" data-act="delapp" title="Delete application">${ic("trash",15)}Delete</button>
         </div>
         ${!canAccept && st == "pending" ? `<div class="mu" style="margin-top:10px">Acceptance is locked until the applicant submits the knowledge test.</div>` : ""}${sg == "final" ? `<div class="mu" style="margin-top:10px">Knowledge test received. Ready for your final decision.</div>` : ""}
     </div>
 
+    ${editCard(r)}
     ${knowledgeTestCard(r)}
 
     <div class="dg">
@@ -3546,6 +3591,18 @@ const hideSr = () => {
         cfg = Object.assign({
     }, DEF); saveCfg(); applyCfg(); render()
 }
+} else if (act == "allowedit" || act == "neweditcode") {
+    var ae = rows.find(x => x.id == cur); if (!ae) return;
+    if (stOf(ae) != "pending") return alert("Only applications that are still under review can be edited.");
+    var ecd = mkEditCode();
+    if (await run(sb.from("applications").update({ edit_allowed: true, edit_code: ecd }).eq("id", cur))) { ae.edit_allowed = true; ae.edit_code = ecd; render() }
+} else if (act == "revokeedit") {
+    if (await run(sb.from("applications").update({ edit_allowed: false, edit_code: null }).eq("id", cur))) {
+        var ar5 = rows.find(x => x.id == cur); if (ar5) { ar5.edit_allowed = false; ar5.edit_code = null } render()
+    }
+} else if (act == "copyeditcode") {
+    var ac = rows.find(x => x.id == cur);
+    if (ac && ac.edit_code) { try { await navigator.clipboard.writeText(ac.edit_code); alert("Code copied.") } catch (e) { prompt("Copy this code:", ac.edit_code) } }
 } else if (act == "saveadminprofile") {
     var nn = g("s_admin_name"), nr = g("s_admin_role");
     if (!nn) return alert("Enter a display name.");
@@ -3753,6 +3810,13 @@ S.forEach(function(s, si) {
     }); h += '</section>'
 });
 $("form").innerHTML = h;
+function introHelpHtml() {
+    return '<p class="qhint">Write a short description of <b>yourself, OOC</b> (out of character, not your roleplay character). You do not need to share any personal info. We just want to know what you do for a living.</p>';
+}
+(function() {
+    var l = document.querySelector("#q_intro label.l");
+    if (l) l.insertAdjacentHTML("afterend", introHelpHtml());
+})();
 function val(q) {
     if (q.t == "fixed") return q.v;
     if (q.t == "radio") {
@@ -4314,6 +4378,93 @@ $("stf").addEventListener("submit", async function(e) {
         <p style="margin:0">Your knowledge test has already been submitted and is now being reviewed by the Advisory Team.</p>
     </div>`;
 });
+/* ---------- Edit application (permitted applicants only) ---------- */
+(function() {
+    var f1 = $("ef1"); if (!f1) return;
+    var orig = null, eref = "", ecode = "";
+    function emsg(id, m) { var e = $(id); e.hidden = !m; e.textContent = m || "" }
+    function norm(v) { return String(v || "").trim().toUpperCase() }
+    function resetEdit() {
+        orig = null; f1.hidden = false; $("ef2").hidden = true; $("e_done").hidden = true;
+        $("e_fields").innerHTML = ""; emsg("e_msg1", ""); emsg("e_msg2", "");
+        $("e_code").value = ""; $("e_open").disabled = false; $("e_open").textContent = "Open my application";
+        try { var r = localStorage.getItem(REF_KEY); if (r && !$("e_ref").value) $("e_ref").value = r } catch (e) {}
+    }
+    function buildEdit(a) {
+        var h = "";
+        S.forEach(function(s) {
+            h += '<section class="c"><h2>' + esc(s.s) + '</h2>';
+            s.i.forEach(function(q) {
+                if (q.t == "fixed") return;
+                h += '<div class="q" id="eq_' + q.id + '"><label class="l" for="e_' + q.id + '">' + esc(q.l) + (q.opt ? ' <span class="mu">(optional)</span>' : ' <span class="req">*</span>') + '</label>';
+                if (q.id == "intro") h += introHelpHtml();
+                if (q.t == "text") h += '<input type="text" id="e_' + q.id + '" maxlength="300" autocomplete="off">';
+                else if (q.t == "area") h += '<textarea id="e_' + q.id + '" maxlength="3000"></textarea><div class="cnt" id="ec_' + q.id + '">0/3000</div>';
+                else q.o.forEach(function(o) { h += '<label class="o"><input type="radio" name="e_' + q.id + '" value="' + esc(o) + '"> ' + esc(o) + '</label>' });
+                h += '</div>';
+            });
+            h += '</section>';
+        });
+        $("e_fields").innerHTML = h;
+        ALL.forEach(function(q) {
+            var v = a[q.id]; if (v == null || q.t == "fixed") return;
+            if (q.t == "radio") {
+                document.querySelectorAll('input[name="e_' + q.id + '"]').forEach(function(x) { if (x.value === v) x.checked = true })
+            } else {
+                $("e_" + q.id).value = v;
+                if (q.t == "area") $("ec_" + q.id).textContent = String(v).length + "/3000"
+            }
+        });
+    }
+    function getVal(q) {
+        if (q.t == "fixed") return (orig && orig.pos) || q.v;
+        if (q.t == "radio") { var r = document.querySelector('input[name="e_' + q.id + '"]:checked'); return r ? r.value : "" }
+        return $("e_" + q.id).value.trim();
+    }
+    $("e_fields").addEventListener("input", function(e) {
+        if (e.target.tagName == "TEXTAREA") { var c = $("ec_" + e.target.id.slice(2)); if (c) c.textContent = e.target.value.length + "/3000" }
+        var b = e.target.closest(".q"); if (b) b.classList.remove("bad");
+        emsg("e_msg2", "");
+    });
+    f1.addEventListener("submit", async function(ev) {
+        ev.preventDefault(); emsg("e_msg1", "");
+        var ref = norm($("e_ref").value), code = norm($("e_code").value);
+        if (!ref || !code) return emsg("e_msg1", "Enter both your reference code and the edit code.");
+        if (!sb) return emsg("e_msg1", "Cannot reach the server right now.");
+        var btn = $("e_open"); btn.disabled = true; btn.textContent = "Checking...";
+        var r = await sb.rpc("get_application_for_edit", { p_ref: ref, p_code: code });
+        btn.disabled = false; btn.textContent = "Open my application";
+        if (r.error) return emsg("e_msg1", "Could not check right now. Try again later.");
+        if (!r.data) return emsg("e_msg1", "Those codes do not match, or editing is not allowed for this application. Ask the Head Advisor or the Director of Public Relations.");
+        orig = r.data; eref = ref; ecode = code;
+        buildEdit(orig);
+        f1.hidden = true; $("ef2").hidden = false; window.scrollTo(0, 0);
+    });
+    $("e_save").onclick = async function() {
+        emsg("e_msg2", "");
+        document.querySelectorAll("#e_fields .q.bad").forEach(function(e) { e.classList.remove("bad") });
+        var out = Object.assign({}, orig), miss = null;
+        ALL.forEach(function(q) {
+            out[q.id] = getVal(q);
+            if (!miss && !q.opt && q.t != "fixed" && !out[q.id]) miss = q;
+        });
+        if (miss) {
+            var el = $("eq_" + miss.id); el.classList.add("bad");
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            return emsg("e_msg2", "Please answer the highlighted question.");
+        }
+        var b = $("e_save"); b.disabled = true; b.textContent = "Saving...";
+        var r = await sb.rpc("submit_application_edit", { p_ref: eref, p_code: ecode, p_answers: out });
+        b.disabled = false; b.textContent = "Save changes";
+        if (r.error) return emsg("e_msg2", "Your changes were not saved: " + r.error.message);
+        if (!r.data) return emsg("e_msg2", "Your edit access is no longer active. Ask an admin for a new code.");
+        $("ef2").hidden = true; $("e_done").hidden = false;
+        $("e_done").innerHTML = '<div class="ck">&#10003;</div><h1>Application updated</h1><p>Your changes were sent to the Advisory Team. Your edit code is now used up. If you need to edit again, ask an admin for a new one.</p><div class="row"><a class="btn g" href="#status">Check status</a><a class="btn w" href="#top">Back to overview</a></div>';
+        window.scrollTo(0, 0);
+    };
+    window.addEventListener("hashchange", function() { if (location.hash === "#edit") resetEdit() });
+    resetEdit();
+})();
 /*  Mobile menu  */
 $("burger").onclick = function(e) {
     e.stopPropagation();
@@ -4346,6 +4497,8 @@ var SITE = [{
     t: "Announcements", d: "News and roster updates", k: "news announcement update promotion removed roster", h: "#news"
 }, {
     t: "Check application status", d: "Look up your application with your reference code", k: "status check reference code result applied accepted", h: "#status"
+}, {
+    t: "Edit my application", d: "For applicants the team permitted to edit", k: "edit change update fix application code permitted", h: "#edit"
 }, {
     t: "Questions", d: "Answers before you apply", k: "faq questions help requirements", h: "#faq"
 }];
@@ -4406,8 +4559,10 @@ function route() {
     isLoa = h === "#loa",
     isStat = h === "#status",
     isRes = h === "#resign",
+    isEdit = h === "#edit",
     isAdm = h === SECRET;
-    $("landing").hidden = isApply || isLoa || isStat || isRes || isAdm;
+    $("landing").hidden = isApply || isLoa || isStat || isRes || isEdit || isAdm;
+    $("edit").hidden = !isEdit;
     $("apply").hidden = !isApply;
     $("loa").hidden = !isLoa;
     $("stat").hidden = !isStat;
@@ -4421,7 +4576,7 @@ function route() {
     }
     $("mmenu").hidden = true;
     if (!isAdm) loadNews();
-    if (isApply || isLoa || isStat || isRes || isAdm) {
+    if (isApply || isLoa || isStat || isRes || isEdit || isAdm) {
         window.scrollTo(0, 0)
     } else {
         var id = location.hash.slice(1),
