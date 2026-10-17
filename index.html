@@ -3005,19 +3005,20 @@ const saveCfg = () => {
     }, light: {
         bg: "#eef1f7", sb: "#ffffff", card: "#ffffff", bd: "#dfe3ec", tx: "#1b1d2a", mu: "#5d6478", in: "#f6f7fa", chip: "#e9ecf3"
     }
-}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, editU = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
+}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, editU = null, pickRef = null, adminList = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
     var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
 }
 const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => l.status != "withdrawn" && (!l.end_date || l.end_date >= today()); const loaState = l => l.status == "withdrawn" ? "withdrawn" : activeLoa(l) ? "active" : "ended"; const loaCls = { active: "s-active", ended: "s-ended", withdrawn: "s-warn" }; const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
     var n = infN(m); return `<span class="tg ${n>=INF_WARN?"s-rejected":n?"s-warn":"s-active"}">${n}</span>${n>=INF_WARN?' <span class="er" title="Review needed">&#9888;</span>':""}`
 }; const stOf = r => r.status || "pending";
 const stageOf = r => { var s = stOf(r); if (s != "pending") return s; var t = ktests.find(x => String(x.application_id) == String(r.id)); return !t ? "pending" : t.status == "submitted" ? "final" : "ktest" };
-const clsOf = s => (s == "ktest" || s == "final") ? "pending" : s;
+const clsOf = s => (s == "ktest" || s == "final") ? "pending" : s == "consider" ? "warn" : s;
 const AUTO_NOTES = {
     pending: "Your application is now under review by the Advisory Team. Please check your application status again later for updates.",
     ktest: "Your application passed the first review. Please answer the knowledge test on the status page, then check back for updates.",
     final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision."
-}; const statusLabel = s => s == "pending" ? "Under Review" : s == "ktest" ? "Pending Knowledge Test" : s == "final" ? "Final Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => AUTO_NOTES[s] ? AUTO_NOTES[s] : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const cnt = k => rows.filter(r => stageOf(r) == k).length; const needN = () => cnt("pending") + cnt("final"); const ago = d => {
+}; const statusLabel = s => s == "consider" ? "For Consideration" : s == "pending" ? "Under Review" : s == "ktest" ? "Pending Knowledge Test" : s == "final" ? "Final Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => AUTO_NOTES[s] ? AUTO_NOTES[s] : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const isConsider = r => !!r.referred_to && stOf(r) == "pending"; const cleanName = n => String(n || "").replace(/^\s*EG\b[\s_.:|-]*/i, "").replace(/[\s_.:|(-]*\bEG\b\)?\s*$/i, "").trim();
+const toMe = r => isConsider(r) && cleanName(r.referred_to).toLowerCase() == cleanName(me).toLowerCase(); const cnt = k => k == "consider" ? rows.filter(isConsider).length : rows.filter(r => stageOf(r) == k).length; const needN = () => cnt("pending") + cnt("final"); const ago = d => {
     var m = Math.max(0, Math.round((Date.now() - new Date(d)) / 6e4)); return m < 1 ? "just now": m < 60 ? m + " mins ago": m < 1440 ? Math.round(m / 60) + " hrs ago": Math.round(m / 1440) + " days ago"
 };
 // ---- auth ----
@@ -3085,23 +3086,25 @@ function navHtml() {
     var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("loah", "LOA History", "", 0, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("res", "Resignations", "", resg.filter(r => (r.status || "pending") == "pending").length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
 }
 function render() {
-    $("nav").innerHTML = navHtml(); var p = needN(); $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
+    $("nav").innerHTML = navHtml(); var p = needN() + rows.filter(r => toMe(r) && stageOf(r) == "ktest").length; $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
 }
+const isOpen = r => { var s = stageOf(r); return s != "accepted" && s != "rejected" };
 function pills() {
-    return `<div class="pills">${["all","pending","ktest","final","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.length:cnt(c)})</button>`).join("")}</div>`;
+    return `<div class="pills">${["all","pending","ktest","final","consider","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.filter(isOpen).length:cnt(c)})</button>`).join("")}</div>`;
 }
 function appCard(r) {
     var a=r.answers||{},sg=stageOf(r),st=clsOf(sg),n=cm.filter(c=>c.application_id==r.id).length;
     var acts = `<button class="p" data-act="open" data-id="${r.id}">${st == "accepted" ? "View application" : "Review application"}</button>`;
     return `<article class="app-row s-${st}" data-act="open" data-id="${r.id}">
         <div class="app-main"><div class="app-avatar app-avatar-user" aria-hidden="true">${ic("user",22)}</div><div style="min-width:0"><div class="app-name">${esc(a.ign||"Unknown applicant")}</div><div class="app-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}${n?` &bull; ${n} comment${n>1?"s":""}`:""}</div></div></div>
-        <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(sg))}</div></div>
+        <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(sg))}</div>${isConsider(r) ? `<div class="app-status s-warn" style="margin-top:5px"><i></i>For Consideration: ${esc(cleanName(r.referred_to))}${toMe(r) ? " (you)" : ""}</div>` : ""}</div>
         <div class="app-field server"><div class="app-field-label">Server / experience</div><div class="app-field-value">${esc(a.years||a.server||"—")}</div></div>
         <div class="app-actions">${acts}</div>
     </article>`;
 }
 
 function vDash() {
+    var mine = rows.filter(toMe), mineCard = mine.length ? `<section class="dash-panel" style="margin-bottom:18px;border-color:#f5a524"><div class="dash-panel-head"><div><h2>Referred to you</h2><p>Applications another admin sent for your consideration.</p></div><span class="tg s-warn">${mine.length}</span></div><div class="review-list">${mine.map(r => { var a = r.answers || {}; return `<div class="review-row"><div><div class="review-name">${esc(a.ign || "Unknown applicant")}</div><div class="review-meta">Referred by ${esc(cleanName(r.referred_by) || "-")}${r.referred_at ? " &bull; " + esc(ago(r.referred_at)) : ""}</div></div><div><span class="review-status" style="--c:#f5a524"><i></i>For Consideration</span></div><div class="review-extra mu">${esc(a.pos || "Applicant")}</div><div class="qa"><button class="s" data-act="open" data-id="${r.id}">Open</button></div></div>` }).join("")}</div></section>` : "";
     var act=loa.filter(activeLoa),nt=rows.filter(r=>(r.created_at||"").slice(0,10)==today()).length,pending=rows.filter(r=>stageOf(r)=="pending"),ktl=rows.filter(r=>stageOf(r)=="ktest"),fin=rows.filter(r=>stageOf(r)=="final");
     var qrow=(r,lab)=>{var a=r.answers||{};return `<div class="review-row"><div><div class="review-name">${esc(a.ign||"Unknown applicant")}</div><div class="review-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}</div></div><div><span class="review-status" style="--c:#4aa8ff"><i></i>${lab}</span></div><div class="review-extra mu">${esc(a.pos||"Applicant")}</div><div class="qa"><button class="s" data-act="open" data-id="${r.id}">Open</button></div></div>`};
     var emp=t=>`<div class="activity-item"><div><span class="mu">${t}</span></div></div>`;
@@ -3109,11 +3112,11 @@ function vDash() {
     var activity=[];rows.slice(0,3).forEach(r=>{var a=r.answers||{};activity.push(`<div class="activity-item"><span class="activity-dot"></span><div><b>${esc(a.ign||"Applicant")}</b> submitted an application.<span class="mu">${esc(ago(r.created_at))}</span></div></div>`)});
     rup.slice(0,3).forEach(x=>activity.push(`<div class="activity-item"><span class="activity-dot"></span><div><b>${esc(x.ign||"Roster")}</b> had a roster update.<span class="mu">${esc(fmt(x.effective_on||x.created_at))}</span></div></div>`));
     if(!activity.length)activity.push('<div class="activity-item"><div><span class="mu">No recent activity.</span></div></div>');
-    return `<div class="qh" style="margin-bottom:20px"><div><h1 style="margin-bottom:5px">Live Dashboard</h1><p class="sub" style="margin:0">Welcome back, ${esc(me)}. Here is what needs your attention.</p></div><button class="s" data-act="nav" data-v="apps">View applications</button></div><div class="stats"><div class="stat" data-act="nav" data-v="apps"><div class="t">Applications</div><div class="sn">${rows.length}${nt?`<span class="tr">+${nt} today</span>`:""}</div><div class="mu">${pending.length} under review &middot; ${cnt("accepted")} accepted</div></div><div class="stat" data-act="nav" data-v="loa"><div class="t">On LOA now</div><div class="sn">${act.length}</div><div class="mu">${loa.length} total records</div></div><div class="stat" data-act="nav" data-v="roster"><div class="t">Roster</div><div class="sn">${ros.length}</div><div class="mu">active members</div></div><div class="stat" data-act="bell"><div class="t">Needs review</div><div class="sn">${pending.length+fin.length}</div><div class="mu">${pending.length+fin.length?"Waiting on you: "+pending.length+" new &middot; "+fin.length+" final":"All caught up"}</div></div></div><div class="dashboard-grid"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Review queue</h2><p>Applications waiting for an Advisory Team decision.</p></div><span class="tg">${pending.length}</span></div><div class="review-list">${recent.length?recent.join(""):'<div class="activity-item"><div><b>All caught up</b><span class="mu">There are no applications waiting for review.</span></div></div>'}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Recent activity</h2><p>Latest activity across the team.</p></div></div>${activity.slice(0,6).join("")}</section></div><div class="dashboard-grid" style="margin-top:18px"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Pending Knowledge Test</h2><p>Test sent, waiting for the applicant to submit.</p></div><span class="tg">${ktl.length}</span></div><div class="review-list">${ktl.length?ktl.map(r=>qrow(r,"Pending Knowledge Test")).join(""):emp("Nobody is waiting on a test.")}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Final Review</h2><p>Test submitted. Ready for your decision.</p></div><span class="tg">${fin.length}</span></div><div class="review-list">${fin.length?fin.map(r=>qrow(r,"Final Review")).join(""):emp("No applications in final review.")}</div></section></div><div class="card" style="margin-top:18px"><h2>On LOA now</h2>${act.length?act.slice(0,6).map(l=>`<div class="row" data-act="nav" data-v="loa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.discord)}</span></div><span class="mu">until ${esc(l.end_date||"open")}</span></div>`).join(""):'<p class="mu" style="margin:0">Nobody is on LOA.</p>'}</div>`;
+    return `<div class="qh" style="margin-bottom:20px"><div><h1 style="margin-bottom:5px">Live Dashboard</h1><p class="sub" style="margin:0">Welcome back, ${esc(me)}. Here is what needs your attention.</p></div><button class="s" data-act="nav" data-v="apps">View applications</button></div>${mineCard}<div class="stats"><div class="stat" data-act="nav" data-v="apps"><div class="t">Applications</div><div class="sn">${rows.length}${nt?`<span class="tr">+${nt} today</span>`:""}</div><div class="mu">${pending.length} under review &middot; ${cnt("accepted")} accepted</div></div><div class="stat" data-act="nav" data-v="loa"><div class="t">On LOA now</div><div class="sn">${act.length}</div><div class="mu">${loa.length} total records</div></div><div class="stat" data-act="nav" data-v="roster"><div class="t">Roster</div><div class="sn">${ros.length}</div><div class="mu">active members</div></div><div class="stat" data-act="bell"><div class="t">Needs review</div><div class="sn">${pending.length+fin.length}</div><div class="mu">${pending.length+fin.length?"Waiting on you: "+pending.length+" new &middot; "+fin.length+" final":"All caught up"}</div></div></div><div class="dashboard-grid"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Review queue</h2><p>Applications waiting for an Advisory Team decision.</p></div><span class="tg">${pending.length}</span></div><div class="review-list">${recent.length?recent.join(""):'<div class="activity-item"><div><b>All caught up</b><span class="mu">There are no applications waiting for review.</span></div></div>'}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Recent activity</h2><p>Latest activity across the team.</p></div></div>${activity.slice(0,6).join("")}</section></div><div class="dashboard-grid" style="margin-top:18px"><section class="dash-panel"><div class="dash-panel-head"><div><h2>Pending Knowledge Test</h2><p>Test sent, waiting for the applicant to submit.</p></div><span class="tg">${ktl.length}</span></div><div class="review-list">${ktl.length?ktl.map(r=>qrow(r,"Pending Knowledge Test")).join(""):emp("Nobody is waiting on a test.")}</div></section><section class="dash-panel"><div class="dash-panel-head"><div><h2>Final Review</h2><p>Test submitted. Ready for your decision.</p></div><span class="tg">${fin.length}</span></div><div class="review-list">${fin.length?fin.map(r=>qrow(r,"Final Review")).join(""):emp("No applications in final review.")}</div></section></div><div class="card" style="margin-top:18px"><h2>On LOA now</h2>${act.length?act.slice(0,6).map(l=>`<div class="row" data-act="nav" data-v="loa"><div><b>${esc(l.ign)}</b> <span class="mu">${esc(l.discord)}</span></div><span class="mu">until ${esc(l.end_date||"open")}</span></div>`).join(""):'<p class="mu" style="margin:0">Nobody is on LOA.</p>'}</div>`;
 }
 
 function vApps() {
-    var f = rows.filter(r => filt == "all" || stageOf(r) == filt);
+    var f = rows.filter(r => filt == "all" ? isOpen(r) : filt == "consider" ? isConsider(r) : stageOf(r) == filt);
     return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg ql">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
 }
 function knowledgeTestFor(appId) {
@@ -3194,6 +3197,11 @@ function knowledgeTestCard(r) {
     </div>`;
 }
 
+function referCard(r) {
+    if (pickRef != r.id) return r.referred_to && stOf(r) == "pending" ? `<div class="card" style="margin-bottom:16px;border-color:#f5a524"><b>For Consideration${toMe(r) ? ": referred to you" : ": " + esc(cleanName(r.referred_to))}</b><div class="mu" style="margin-top:4px">Referred by ${esc(cleanName(r.referred_by) || "-")}${r.referred_at ? " &middot; " + esc(fmt(r.referred_at)) : ""}</div></div>` : "";
+    var list = adminList || [];
+    return `<div class="card" style="margin-bottom:16px"><div class="qh" style="margin:0"><div><h2 style="margin-bottom:4px">For Consideration</h2><p class="sub" style="margin:0">Pick who should look at this application.</p></div><button class="s" data-act="refclose">Close</button></div><div class="bar">${list.map(n => `<button class="${cleanName(r.referred_to) == n ? "p" : "s"}" data-act="refer" data-v="${esc(n)}">${esc(n)}${n == cleanName(me) ? " (you)" : ""}</button>`).join("") || '<span class="mu">No users found.</span>'}${r.referred_to ? `<button class="s dn" data-act="unrefer">Remove</button>` : ""}</div></div>`
+}
 function mkEditCode() {
     var c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", a = new Uint8Array(6), s = "";
     crypto.getRandomValues(a);
@@ -3222,7 +3230,7 @@ function vDetail() {
 
     return `<button class="s" data-act="back">&larr; Back</button>
     <div class="card s-${st}" style="margin-top:12px">
-        <h1>${esc(a.ign || "Applicant")} <span class="tg">${esc(statusLabel(sg))}</span></h1>
+        <h1>${esc(a.ign || "Applicant")} <span class="tg">${esc(statusLabel(sg))}</span>${isConsider(r) ? ` <span class="tg s-warn" title="Referred by ${esc(cleanName(r.referred_by) || "-")}">For Consideration: ${esc(cleanName(r.referred_to))}</span>` : ""}</h1>
         <div class="mu">${esc(a.discord || "-")} &middot; submitted ${esc(fmt(r.created_at))}</div>
         <div class="bar">
             <button class="s ${sg=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button>
@@ -3230,11 +3238,13 @@ function vDetail() {
             <button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button>
             <button class="s" data-act="toroster">+ Add to roster</button>
             ${st == "pending" && !(r.edit_allowed && r.edit_code) ? `<button class="s" data-act="allowedit">Allow applicant to edit</button>` : ""}
+            ${st == "pending" ? `<button class="s ${r.referred_to ? "on" : ""}" data-act="refpick">For Consideration${r.referred_to ? ": " + esc(cleanName(r.referred_to)) : ""}</button>` : ""}
             <button class="ab dl" data-act="delapp" title="Delete application">${ic("trash",15)}Delete</button>
         </div>
         ${!canAccept && st == "pending" ? `<div class="mu" style="margin-top:10px">Acceptance is locked until the applicant submits the knowledge test.</div>` : ""}${sg == "final" ? `<div class="mu" style="margin-top:10px">Knowledge test received. Ready for your final decision.</div>` : ""}
     </div>
 
+    ${referCard(r)}
     ${editCard(r)}
     ${knowledgeTestCard(r)}
 
@@ -3422,7 +3432,7 @@ const hideSr = () => {
     } else if (act == "grp") {
         grp = !grp; render()
     } else if (act == "bell") {
-        view = "apps"; filt = "pending"; cur = null; render(); scrollTo(0, 0)
+        view = "apps"; filt = rows.some(toMe) ? "consider" : "pending"; cur = null; render(); scrollTo(0, 0)
     } else if (act == "pm") {
         $("pmenu").classList.toggle("hide")
     } else if (act == "nt") {
@@ -3601,6 +3611,27 @@ const hideSr = () => {
         cfg = Object.assign({
     }, DEF); saveCfg(); applyCfg(); render()
 }
+} else if (act == "refpick") {
+    if (pickRef == cur) { pickRef = null; render(); return }
+    if (!adminList) {
+        var al = await sb.rpc("list_admins");
+        var nm2 = x => (x.display_name || "").trim() || (x.email || "").split("@")[0].split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        var dbn = !al.error && al.data ? al.data.map(x => cleanName(nm2(x))).filter(Boolean) : [];
+        adminList = ["rio", "selene"].map(k => dbn.find(n => n.toLowerCase().split(/\s+/)[0] == k) || k.charAt(0).toUpperCase() + k.slice(1));
+    }
+    pickRef = cur; render()
+} else if (act == "refclose") {
+    pickRef = null; render()
+} else if (act == "refer" || act == "unrefer") {
+    var rf = rows.find(x => x.id == cur); if (!rf) return;
+    var on = act == "refer";
+    var tgt = v; var patch = on ? { referred_to: tgt, referred_by: cleanName(me), referred_at: new Date().toISOString() } : { referred_to: null, referred_by: null, referred_at: null };
+    var rr = await sb.from("applications").update(patch).eq("id", cur).select("id");
+    if (rr.error) return alert(rr.error.message.indexOf("referred") > -1 ? "Run for_consideration.sql in Supabase first (adds the referral columns)." : rr.error.message);
+    if (!rr.data || !rr.data.length) return alert("Not saved. Check your Supabase update permissions for applications.");
+    Object.assign(rf, patch); pickRef = null;
+    await sb.from("comments").insert({ application_id: cur, author: me, body: on ? "Marked For Consideration: referred to " + tgt + "." : "Removed from For Consideration." });
+    render(); refresh(["comments"], true)
 } else if (act == "allowedit" || act == "neweditcode") {
     var ae = rows.find(x => x.id == cur); if (!ae) return;
     if (stOf(ae) != "pending") return alert("Only applications that are still under review can be edited.");
