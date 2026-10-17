@@ -3005,7 +3005,7 @@ const saveCfg = () => {
     }, light: {
         bg: "#eef1f7", sb: "#ffffff", card: "#ffffff", bd: "#dfe3ec", tx: "#1b1d2a", mu: "#5d6478", in: "#f6f7fa", chip: "#e9ecf3"
     }
-}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
+}; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, editU = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
     var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
 }
 const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => l.status != "withdrawn" && (!l.end_date || l.end_date >= today()); const loaState = l => l.status == "withdrawn" ? "withdrawn" : activeLoa(l) ? "active" : "ended"; const loaCls = { active: "s-active", ended: "s-ended", withdrawn: "s-warn" }; const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
@@ -3325,21 +3325,21 @@ function vAud() {
 }; var own = window.__advAdminEmail === "rio@gmail.com"; var cards = aud.map(a => `<div class="qc s-rejected" style="cursor:default"><div class="top2"><span class="tg">${esc(a.tbl)}</span><span style="display:flex;gap:6px"><button class="ab hd" data-act="audrestore" data-id="${a.id}">Restore</button>${own ? `<button class="ab dl sm" data-act="auddel" data-id="${a.id}" title="Permanently delete this log entry">${ic("trash",15)}Delete</button>` : ""}</span></div><h3>${esc(lbl(a))}</h3><div class="mu">Deleted by ${esc(a.actor||"-")} &bull; ${esc(fmt(a.created_at))}</div></div>`).join(""); return `<h1>Audit Log</h1><p class="sub">Everything that was deleted, and who did it. Head admins can restore items. Latest 100.${own ? " The owner can permanently delete log entries." : ""}</p>` + (own && aud.length ? `<div style="margin-bottom:14px"><button class="ab dl" data-act="audclear">${ic("trash",15)}Clear all logs</button></div>` : "") + (aud.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">Nothing deleted yet.</div>`);
 }
 function vRup() {
-    var names = ros.map(m => `<option value="${esc(m.ign)}"></option>`).join(""); var T = {
+    var e = rup.find(x => x.id == editU) || {}; var names = ros.map(m => `<option value="${esc(m.ign)}"></option>`).join(""); var T = {
         promotion: ["Promotion", "s-active"], joined: ["Joined", "s-active"], demotion: ["Demotion", "s-warn"], removed: ["Removed", "s-rejected"], other: ["Update", "s-pending"]
     }; var cards = rup.map(u => {
-        var t = T[u.type] || T.other; return `<div class="qc ${t[1]}" style="cursor:default"><div class="top2"><span class="tg">${t[0]}</span><button class="ab dl sm" data-act="rupdel" data-id="${u.id}" title="Delete update">${ic("trash",15)}Delete</button></div><h3>${esc(u.ign)}</h3><div class="mu" style="margin-bottom:8px">By ${esc(u.issued_by||"-")}</div><div class="ln"><span>Date</span>${esc(u.effective_on||"")}</div><div class="ans" style="margin:6px 0 0">${esc(u.details||"-")}</div></div>`
+        var t = T[u.type] || T.other; return `<div class="qc ${t[1]}" style="cursor:default"><div class="top2"><span class="tg">${t[0]}</span><div class="acts"><button class="ab" data-act="rupedit" data-id="${u.id}" title="Edit">${ic("edit",15)}Edit</button><button class="ab dl sm" data-act="rupdel" data-id="${u.id}" title="Delete update">${ic("trash",15)}Delete</button></div></div><h3>${esc(u.ign)}</h3><div class="mu" style="margin-bottom:8px">By ${esc(u.issued_by||"-")}</div><div class="ln"><span>Date</span>${esc(u.effective_on||"")}</div><div class="ans" style="margin:6px 0 0">${esc(u.details||"-")}</div></div>`
     }).join(""); return `<h1>Roster Updates</h1><p class="sub">Promotions, demotions, removals. These show on the landing page (latest 6).</p>
- <div class="card"><h2>Log roster update</h2>
+ <div class="card"><h2>${editU?"Edit roster update":"Log roster update"}</h2>
  <datalist id="u_names">${names}</datalist>
- <div class="g"><label class="mu">Member<input id="u_m" list="u_names" placeholder="Pick or type a name" autocomplete="off"></label>
- <label class="mu">Type<select id="u_t"><option value="promotion">Promotion</option><option value="demotion">Demotion</option><option value="removed">Removed</option><option value="joined">Joined</option><option value="other">Other</option></select></label>
- <label class="mu">Effective date<input id="u_e" type="date" value="${today()}"></label>
+ <div class="g"><label class="mu">Member<input id="u_m" list="u_names" placeholder="Pick or type a name" autocomplete="off" value="${esc(e.ign)}"></label>
+ <label class="mu">Type<select id="u_t">${[["promotion","Promotion"],["demotion","Demotion"],["removed","Removed"],["joined","Joined"],["other","Other"]].map(k => `<option value="${k[0]}"${e.type == k[0] ? " selected" : ""}>${k[1]}</option>`).join("")}</select></label>
+ <label class="mu">Effective date<input id="u_e" type="date" value="${esc(e.effective_on || today())}"></label>
  <label class="mu">New rank / position (optional)<input id="u_rk" placeholder="e.g. Senior Advisor"></label>
- <label class="mu">Issued by<input id="u_by" value="${esc(me)}"></label></div>
- <textarea id="u_d" placeholder="Details (e.g. Advisor to Senior Advisor, or reason for removal)"></textarea>
- <label class="mu" style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="checkbox" id="u_rm" style="width:auto;margin:0"> If type is Removed, also delete them from the roster</label>
- <button class="p" data-act="rupadd">Add update</button></div>` + (rup.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">No roster updates yet.</div>`);
+ <label class="mu">Issued by<input id="u_by" value="${esc(e.issued_by || me)}"></label></div>
+ <textarea id="u_d" placeholder="Details (e.g. Advisor to Senior Advisor, or reason for removal)">${esc(e.details)}</textarea>
+ <label class="mu" style="display:${editU ? "none" : "flex"};gap:8px;align-items:center;margin-bottom:10px"><input type="checkbox" id="u_rm" style="width:auto;margin:0"> If type is Removed, also delete them from the roster</label>
+ <button class="p" data-act="rupadd">${editU ? "Save changes" : "Add update"}</button>${editU ? ` <button class="s" data-act="rupcancel">Cancel</button>` : ""}</div>` + (rup.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">No roster updates yet.</div>`);
 }
 function vRoster() {
     var e = ros.find(x => x.id == editR) || {};
@@ -3549,13 +3549,23 @@ const hideSr = () => {
 } else if (act == "anndel") {
     if (confirm("Delete this announcement?") && await deleteWithAudit("announcements", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "rupadd") {
-    var nm = g("u_m"), ty = g("u_t"), rk = g("u_rk"), dt = g("u_d"), ef = g("u_e") || today(); if (!nm) return alert("Member name is required"); var norm = s => (s || "").toLowerCase().replace(/[\s_]+/g, ""); var rm = ros.find(x => norm(x.ign) == norm(nm)); if (!dt && rk) dt = (rm && rm.rank ? rm.rank + " to ": "") + rk; if (!(await run(sb.from("roster_updates").insert({
+    var nm = g("u_m"), ty = g("u_t"), rk = g("u_rk"), dt = g("u_d"), ef = g("u_e") || today(); if (!nm) return alert("Member name is required"); var norm = s => (s || "").toLowerCase().replace(/[\s_]+/g, ""); var rm = ros.find(x => norm(x.ign) == norm(nm)); if (!dt && rk) dt = (rm && rm.rank ? rm.rank + " to ": "") + rk;
+    if (editU) {
+        var ur = await sb.from("roster_updates").update({ ign: nm, type: ty, details: dt, effective_on: ef, issued_by: g("u_by") || me }).eq("id", editU).select("id");
+        if (ur.error) return alert(ur.error.message);
+        if (!ur.data || !ur.data.length) return alert("Not saved. Run roster_updates_edit.sql in Supabase so admins can edit roster updates.");
+        editU = null; refresh(["roster_updates"]); return
+    } if (!(await run(sb.from("roster_updates").insert({
         ign: nm, type: ty, details: dt, effective_on: ef, issued_by: g("u_by") || me
     })))) return; if ((ty == "promotion" || ty == "demotion") && rk && rm) await run(sb.from("roster").update({
         rank: rk
     }).eq("id", rm.id)); if (ty == "joined" && !rm) await run(sb.from("roster").insert({
         ign: nm, rank: rk || null, joined: ef
     })); if (ty == "removed" && $("u_rm").checked) { if (rm) await deleteWithAudit("roster", rm.id); else alert("No roster member matches \"" + nm + "\", so nobody was removed from the roster. The update was still logged.") } refresh(["roster_updates", "roster", "audit_log"])
+} else if (act == "rupedit") {
+    editU = id; render(); scrollTo(0, 0)
+} else if (act == "rupcancel") {
+    editU = null; render()
 } else if (act == "rupdel") {
     if (confirm("Delete this roster update?") && await deleteWithAudit("roster_updates", id)) (render(), refresh(["audit_log"], true))
 } else if (act == "rosadd") {
