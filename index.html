@@ -3002,6 +3002,123 @@ main{padding:6px 18px 28px}
 @media(max-width:1280px){.px{grid-template-columns:1fr}.px-l,.px-r{border:0}.px-hero{grid-template-columns:1fr;justify-items:center}.px-info{width:100%}.px-fabs{display:none}}
 @media(max-width:700px){.px-cards{grid-template-columns:1fr}.px-fg{grid-template-columns:1fr}}
 @media(max-width:1150px){.u-grid>*{grid-column:span 12!important;grid-row:auto!important}.u-3{grid-template-columns:1fr}}
+
+/* ===== Modern UI pass: rounded buttons, normal case, soft hover (theme colors unchanged) ===== */
+.s-interview{--c:#a78bfa;--cb:rgba(167,139,250,.16)}
+.s,.p,.ab,.pill{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;line-height:1.2;transition:background .15s,border-color .15s,color .15s,box-shadow .15s,transform .15s}
+.s{background:rgba(255,255,255,.04);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:10px 16px}
+.s:hover{background:rgba(255,255,255,.08);border-color:color-mix(in srgb,var(--rd) 55%,var(--bd));color:#fff;transform:translateY(-1px)}
+.s.on{background:color-mix(in srgb,var(--rd) 16%,transparent);border-color:var(--rd);color:var(--rd2)}
+.p,.nw .p{background:#fff;color:#0b0f17;border:1px solid transparent;border-radius:10px;padding:10px 18px;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.p:hover{background:#e9eef5;filter:none;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.ab{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:10px;padding:8px 13px}
+.ab:hover{background:rgba(255,255,255,.08);border-color:color-mix(in srgb,var(--rd) 55%,var(--bd));transform:translateY(-1px)}
+.ab.dl,.dn{background:rgba(255,93,108,.08);border:1px solid rgba(255,93,108,.3);color:var(--er)}
+.ab.dl:hover,.dn:hover{background:rgba(255,93,108,.16);border-color:var(--er);color:var(--er)}
+.bar{gap:8px;margin-top:16px}
+.pills{background:transparent;padding:0;gap:8px;border-radius:0}
+.pill{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:999px;padding:8px 14px;color:var(--mu)}
+.pill:hover{color:#fff;border-color:color-mix(in srgb,var(--rd) 55%,var(--bd))}
+.pill.on{background:color-mix(in srgb,var(--rd) 18%,transparent);border-color:var(--rd);color:var(--rd2)}
+.pill i{border-radius:50%}
+.app-row{grid-template-columns:minmax(250px,1.5fr) 170px minmax(150px,.7fr) 200px;padding:16px 18px;border-radius:14px;transform:none}
+.app-row:hover{transform:none}
+.app-avatar{border-radius:12px}
+.app-actions .p,.app-actions .s{overflow:visible;text-overflow:clip;padding:11px 14px}
+.tg{border-radius:999px;letter-spacing:.04em}
+button[data-act="back"]::before{content:"\2190  "}
+
+/* ===== Application cards grid ===== */
+.app-list{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.app-row{display:flex!important;flex-direction:column;align-items:stretch;gap:0;padding:0!important;overflow:hidden;border-radius:14px;cursor:pointer;transition:border-color .16s,transform .16s,box-shadow .16s}
+.app-row:hover{transform:translateY(-3px)!important;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.app-banner{position:relative;height:96px;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,#0a0f17),color-mix(in srgb,var(--c) 6%,#0a0f17))}
+.app-banner .app-avatar{width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.28);border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.app-badge{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:999px;background:rgba(5,8,13,.72);backdrop-filter:blur(6px);color:var(--c);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.app-badge i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.app-body{padding:16px 18px 6px;flex:1;min-width:0}
+.app-kicker{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin-bottom:8px}
+.app-row .app-name{font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.01em;white-space:normal;line-height:1.2}
+.app-row .app-meta{margin-top:6px;font-size:12.5px}
+.app-row .app-field.server{display:block!important;margin-top:14px}
+.app-row .app-field-value{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.app-row .app-actions{padding:14px 18px 18px}
+.app-row .app-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:transparent;border:1px solid var(--bd);color:var(--tx)}
+.app-row .app-btn b{font-size:15px;transition:transform .15s}
+.app-row:hover .app-btn{border-color:var(--rd);color:var(--rd2);background:color-mix(in srgb,var(--rd) 10%,transparent)}
+.app-row:hover .app-btn b{transform:translateX(3px)}
+@media(max-width:700px){.app-list{grid-template-columns:1fr}}
+
+/* ===== Messages-style applications layout ===== */
+.msgx{display:grid;grid-template-columns:330px minmax(0,1fr);gap:16px;height:calc(100vh - 96px);min-height:560px}
+.mx-list,.mx-main{background:linear-gradient(180deg,#0d131c,#0a0f17);border:1px solid var(--bd);border-radius:16px;min-height:0;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mx-list{padding:16px;gap:12px}
+.mx-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mx-head h1{margin:0;font-size:20px;text-transform:none;letter-spacing:0;font-weight:700}
+.mx-head .s{padding:7px 12px;font-size:12px}
+.mx-search{position:relative}
+.mx-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none}
+.mx-search input{margin:0;padding:10px 14px 10px 38px;border-radius:999px;background:rgba(255,255,255,.04)}
+.mx-filt .pills{gap:6px}
+.mx-filt .pill{padding:5px 10px;font-size:11.5px}
+.mx-count{font-size:12px;color:var(--mu)}
+.mx-items{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin:0 -4px;padding:0 4px}
+.mx-item{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"av meta n" "av st st";column-gap:12px;row-gap:3px;align-items:center;text-align:left;width:100%;padding:11px 12px;border-radius:14px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--tx);transition:background .15s,border-color .15s}
+.mx-item:hover{background:rgba(255,255,255,.07);border-color:color-mix(in srgb,var(--rd) 45%,var(--bd))}
+.mx-av{grid-area:av;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;background:color-mix(in srgb,var(--c,var(--rd)) 22%,#0a0f17);color:var(--c,var(--rd2));border:1px solid color-mix(in srgb,var(--c,var(--rd)) 40%,transparent);flex:none}
+.mx-av.mx-av-big{width:48px;height:48px;min-width:48px;max-width:48px;flex:0 0 48px;align-self:center;aspect-ratio:1/1;font-size:19px;padding:0;margin:0}
+.mx-meta{grid-area:meta;min-width:0;display:flex;flex-direction:column}
+.mx-meta b{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx-meta small{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx-st{grid-area:st;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.mx-st i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.mx-n{grid-area:n;min-width:20px;height:20px;padding:0 6px;border-radius:999px;display:inline-grid;place-items:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.1);color:var(--tx)}
+.mx-item.on{background:linear-gradient(135deg,var(--rd3,var(--rd)),var(--rd));border-color:transparent;color:#04141a}
+.mx-item.on .mx-meta small,.mx-item.on .mx-st{color:rgba(4,20,26,.75)}
+.mx-item.on .mx-st i{background:#04141a}
+.mx-item.on .mx-av{background:rgba(255,255,255,.35);color:#04141a;border-color:transparent}
+.mx-item.on .mx-n{background:rgba(4,20,26,.2);color:#04141a}
+.mx-empty-list{padding:20px;text-align:center;color:var(--mu)}
+.mx-empty{margin:auto;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:30px}
+.mx-empty-ic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--rd2);margin-bottom:8px}
+.mx-top{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--bd);flex:none}
+.mx-back{display:none;padding:8px 12px}
+.mx-who{flex:1;min-width:0}
+.mx-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mx-sub{font-size:12px;color:var(--mu);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mx-sub .mx-st{font-size:10.5px}
+.mx-tools{display:flex;align-items:center;gap:8px;flex:none}
+.mx-cmbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px}
+.mx-ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;padding:0;background:rgba(255,255,255,.04);border:1px solid var(--bd);color:var(--tx);transition:background .15s,border-color .15s,color .15s}
+.mx-ic:hover:not(:disabled){background:rgba(255,255,255,.1);border-color:var(--rd);color:var(--rd2)}
+.mx-ic.on{background:color-mix(in srgb,var(--rd) 18%,transparent);border-color:var(--rd);color:var(--rd2)}
+.mx-ic:disabled{opacity:.4;cursor:not-allowed}
+.mx-menuwrap{position:relative}
+.mx-menu{position:absolute;right:0;top:48px;z-index:20;min-width:220px;padding:6px;border-radius:14px;background:#0f1622;border:1px solid var(--bd);box-shadow:0 18px 40px rgba(0,0,0,.5);display:flex;flex-direction:column}
+.mx-menu button{background:none;border:0;text-align:left;color:var(--tx);padding:10px 12px;border-radius:9px;font-size:13px;font-weight:500}
+.mx-menu button:hover{background:rgba(255,255,255,.07)}
+.mx-menu button.danger{color:var(--er)}
+.mx-menu button.danger:hover{background:rgba(255,93,108,.12)}
+.mx-menu hr{border:0;border-top:1px solid var(--bd);margin:5px 0;width:100%}
+.mx-body{flex:1;min-height:0;overflow-y:auto;padding:18px}
+.mx-body .bub.in{max-width:100%;width:100%;box-sizing:border-box;border-radius:14px;padding:14px 18px}
+.mx-sec{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:20px 0 12px}
+.mx-hint{padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px dashed var(--bd);color:var(--mu);font-size:12.5px;margin-bottom:14px}
+.bub{max-width:78%;padding:12px 14px;border-radius:16px;margin-bottom:10px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.bub.in{background:rgba(255,255,255,.06);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.bub.me{margin-left:auto;background:#fff;color:#0b0f17;border-bottom-right-radius:4px}
+.bub b{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-bottom:5px}
+.bub-h{display:flex;align-items:center;gap:10px;font-size:11px;opacity:.65;margin-bottom:5px}
+.bub-h span:first-child{font-weight:700}
+.bub-x{margin-left:auto;background:none;border:0;color:inherit;opacity:.6;padding:2px;display:grid;place-items:center}
+.bub-x:hover{opacity:1;color:var(--er)}
+.mx-chat{flex:none;height:46%;min-height:240px;border-top:1px solid var(--bd);display:flex;flex-direction:column;background:rgba(0,0,0,.18)}
+.mx-chathead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:12px 18px 0;font-size:14px}
+.mx-cmlist{flex:1;min-height:0;overflow-y:auto;padding:12px 18px}
+.mx-compose{display:flex;gap:10px;align-items:flex-end;padding:12px 18px 16px}
+.mx-compose textarea{margin:0;min-height:44px;max-height:120px;border-radius:999px;padding:12px 18px;resize:none;flex:1}
+.mx-compose .p{border-radius:999px;padding:12px 24px}
+@media(max-width:900px){.msgx{grid-template-columns:1fr;height:auto;min-height:0}.msgx.has-cur .mx-list{display:none}.msgx:not(.has-cur) .mx-main{display:none}.mx-back{display:inline-flex}.mx-main{min-height:70vh}.mx-top{flex-wrap:wrap}.bub{max-width:92%}}
 </style>
 
 
@@ -3126,8 +3243,9 @@ const clsOf = s => (s == "ktest" || s == "final") ? "pending" : s == "consider" 
 const AUTO_NOTES = {
     pending: "Your application is now under review by the Advisory Team. Please check your application status again later for updates.",
     ktest: "Your application passed the first review. Please answer the knowledge test on the status page, then check back for updates.",
-    final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision."
-}; const statusLabel = s => s == "consider" ? "For Consideration" : s == "pending" ? "Under Review" : s == "ktest" ? "Pending Knowledge Test" : s == "final" ? "Final Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => AUTO_NOTES[s] ? AUTO_NOTES[s] : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const isConsider = r => !!r.referred_to && stOf(r) == "pending"; const cleanName = n => String(n || "").replace(/^\s*EG\b[\s_.:|-]*/i, "").replace(/[\s_.:|(-]*\bEG\b\)?\s*$/i, "").trim();
+    final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision.",
+    interview: "Your application has been shortlisted for an interview with the Advisory Team. Please watch your Discord DMs for the schedule, then check this page again for updates."
+}; const statusLabel = s => s == "interview" ? "For Interview" : s == "consider" ? "For Consideration" : s == "pending" ? "Under Review" : s == "ktest" ? "Pending Knowledge Test" : s == "final" ? "Final Review" : s == "accepted" ? "Accepted" : "Not Selected"; const autoStatusNote = s => AUTO_NOTES[s] ? AUTO_NOTES[s] : s == "accepted" ? "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update." : "Your application has been reviewed but was not selected this time. Please check your application status for the latest update."; const isConsider = r => !!r.referred_to && stOf(r) == "pending"; const cleanName = n => String(n || "").replace(/^\s*EG\b[\s_.:|-]*/i, "").replace(/[\s_.:|(-]*\bEG\b\)?\s*$/i, "").trim();
 const toMe = r => isConsider(r) && cleanName(r.referred_to).toLowerCase() == cleanName(me).toLowerCase(); const cnt = k => k == "consider" ? rows.filter(isConsider).length : rows.filter(r => stageOf(r) == k).length; const needN = () => cnt("pending") + cnt("final"); const ago = d => {
     var m = Math.max(0, Math.round((Date.now() - new Date(d)) / 6e4)); return m < 1 ? "just now": m < 60 ? m + " mins ago": m < 1440 ? Math.round(m / 60) + " hrs ago": Math.round(m / 1440) + " days ago"
 };
@@ -3196,20 +3314,25 @@ function navHtml() {
     var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("loah", "LOA History", "", 0, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("res", "Resignations", "", resg.filter(r => (r.status || "pending") == "pending").length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
 }
 function render() {
-    $("nav").innerHTML = navHtml(); var p = needN() + rows.filter(r => toMe(r) && stageOf(r) == "ktest").length; $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? (cur ? vDetail(): vApps()): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
+    $("nav").innerHTML = navHtml(); var p = needN() + rows.filter(r => toMe(r) && stageOf(r) == "ktest").length; $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? vApps(): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): vRoster());
 }
 const isOpen = r => { var s = stageOf(r); return s != "accepted" && s != "rejected" };
 function pills() {
-    return `<div class="pills">${["all","pending","ktest","final","consider","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.filter(isOpen).length:cnt(c)})</button>`).join("")}</div>`;
+    return `<div class="pills">${["all","pending","ktest","final","interview","consider","accepted","rejected"].map(c=>`<button class="pill ${filt==c?"on":""}" data-act="filt" data-v="${c}">${c=="all"?"":`<i class="s-${clsOf(c)}"></i>`}${c=="all"?"All":statusLabel(c)} (${c=="all"?rows.filter(isOpen).length:cnt(c)})</button>`).join("")}</div>`;
 }
 function appCard(r) {
     var a=r.answers||{},sg=stageOf(r),st=clsOf(sg),n=cm.filter(c=>c.application_id==r.id).length;
-    var acts = `<button class="p" data-act="open" data-id="${r.id}">${st == "accepted" ? "View application" : "Review application"}</button>`;
+    var btn = `<button class="s app-btn" data-act="open" data-id="${r.id}"><span>${st == "accepted" ? "View application" : "Review application"}</span><b>&rarr;</b></button>`;
     return `<article class="app-row s-${st}" data-act="open" data-id="${r.id}">
-        <div class="app-main"><div class="app-avatar app-avatar-user" aria-hidden="true">${ic("user",22)}</div><div style="min-width:0"><div class="app-name">${esc(a.ign||"Unknown applicant")}</div><div class="app-meta">${esc(a.discord||"No Discord username")} &bull; ${esc(ago(r.created_at))}${n?` &bull; ${n} comment${n>1?"s":""}`:""}</div></div></div>
-        <div class="app-field"><div class="app-field-label">Status</div><div class="app-status"><i></i>${esc(statusLabel(sg))}</div>${isConsider(r) ? `<div class="app-status s-warn" style="margin-top:5px"><i></i>For Consideration: ${esc(cleanName(r.referred_to))}${toMe(r) ? " (you)" : ""}</div>` : ""}</div>
-        <div class="app-field server"><div class="app-field-label">Server / experience</div><div class="app-field-value">${esc(a.years||a.server||"—")}</div></div>
-        <div class="app-actions">${acts}</div>
+        <div class="app-banner"><div class="app-avatar app-avatar-user" aria-hidden="true">${ic("user",26)}</div><span class="app-badge"><i></i>${esc(statusLabel(sg))}</span></div>
+        <div class="app-body">
+            <div class="app-kicker">${esc(ago(r.created_at))}${n?` &bull; ${n} comment${n>1?"s":""}`:""}</div>
+            <div class="app-name">${esc(a.ign||"Unknown applicant")}</div>
+            <div class="app-meta">${esc(a.discord||"No Discord username")}</div>
+            ${isConsider(r) ? `<div class="app-status s-warn" style="margin-top:8px"><i></i>For Consideration: ${esc(cleanName(r.referred_to))}${toMe(r) ? " (you)" : ""}</div>` : ""}
+            <div class="app-field server"><div class="app-field-label">Server / experience</div><div class="app-field-value">${esc(a.years||a.server||"—")}</div></div>
+        </div>
+        <div class="app-actions">${btn}</div>
     </article>`;
 }
 
@@ -3231,7 +3354,7 @@ function vDash() {
     mine.slice(0,2).forEach(r=>al.push(`<div class="u-al" data-act="open" data-id="${r.id}" style="cursor:pointer"><i style="background:#f5a524"></i><div>Referred to you: <b>${esc((r.answers||{}).ign||"Applicant")}</b><small>${esc(cleanName(r.referred_by)||"-")}</small></div></div>`));
     if(pendRes)al.push(`<div class="u-al" data-act="nav" data-v="res" style="cursor:pointer"><i style="background:#ff5d6c"></i><div>${pendRes} pending resignation${pendRes>1?"s":""}<small>Needs processing</small></div></div>`);
     if(!al.length)al.push('<div class="u-al"><i></i><div>All caught up<small>Nothing needs your attention.</small></div></div>');
-    var bars=["pending","ktest","final","accepted","rejected"].map(c=>`<div class="u-bar"><div><span>${statusLabel(c)}</span><b>${cnt(c)}</b></div><i><s style="width:${pct(cnt(c),T)}%"></s></i></div>`).join("");
+    var bars=["pending","ktest","final","interview","accepted","rejected"].map(c=>`<div class="u-bar"><div><span>${statusLabel(c)}</span><b>${cnt(c)}</b></div><i><s style="width:${pct(cnt(c),T)}%"></s></i></div>`).join("");
     return `<div class="u-head"><div><h1>Control Panel</h1><p class="sub">admin/${esc(me)}</p></div><button class="s" data-act="nav" data-v="apps">View applications</button></div>
 <div class="u-grid">
 <section class="u-card u-metrics"><h2>System Metric</h2><div class="u-3">
@@ -3249,9 +3372,74 @@ ${mineCard?`<section class="u-card" style="grid-column:span 9">${mineCard}</sect
 </div>`;
 }
 
+var appQ = "", showCm = false, appMenu = false;
+function appFiltered() {
+    var q = appQ.trim().toLowerCase();
+    return rows.filter(r => filt == "all" ? isOpen(r) : filt == "consider" ? isConsider(r) : stageOf(r) == filt).filter(r => { if (!q) return true; var a = r.answers || {}; return [a.ign, a.discord, r.ref].some(x => String(x || "").toLowerCase().indexOf(q) > -1) })
+}
+function appItems(f) {
+    if (!f.length) return `<div class="mx-empty-list">Nothing here.</div>`;
+    return f.map(r => {
+        var a = r.answers || {}, sg = stageOf(r), n = cm.filter(c => c.application_id == r.id).length;
+        return `<button class="mx-item s-${clsOf(sg)} ${String(cur) == String(r.id) ? "on" : ""}" data-act="open" data-id="${r.id}">
+            <span class="mx-av">${esc((a.ign || "?").trim().charAt(0).toUpperCase())}</span>
+            <span class="mx-meta"><b>${esc(a.ign || "Unknown applicant")}</b><small>${esc(a.discord || "No Discord username")}</small></span>
+            <span class="mx-st"><i></i>${esc(statusLabel(sg))}</span>${n ? `<span class="mx-n">${n}</span>` : ""}
+        </button>`
+    }).join("")
+}
+var ICO_HEART = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+var ICO_DOTS = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>';
+function appPanel(r) {
+    var a = r.answers || {}, sg = stageOf(r), st = stOf(r), cs = cm.filter(c => c.application_id == r.id).slice().sort((x, y) => new Date(x.created_at) - new Date(y.created_at));
+    var kt = knowledgeTestFor(r.id), canAccept = !!(kt && kt.status == "submitted"), accOff = !canAccept && st != "accepted";
+    var menu = appMenu ? `<div class="mx-menu">
+        <button data-act="status" data-v="pending">Under Review</button>
+        ${!kt ? `<button data-act="sendtest" data-id="${r.id}">Send knowledge test</button>` : ""}
+        <button data-act="status" data-v="interview">For Interview</button>
+        ${st == "pending" ? `<button data-act="refpick">For Consideration${r.referred_to ? ": " + esc(cleanName(r.referred_to)) : ""}</button>` : ""}
+        <button data-act="status" data-v="rejected">Not Selected</button>
+        <button data-act="toroster">Add to roster</button>
+        ${st == "pending" && !(r.edit_allowed && r.edit_code) ? `<button data-act="allowedit">Allow applicant to edit</button>` : ""}
+        <hr><button class="danger" data-act="delapp">Delete application</button>
+    </div>` : "";
+    var head = `<div class="mx-top s-${clsOf(sg)}">
+        <button class="s mx-back" data-act="back">&larr;</button>
+        <span class="mx-av mx-av-big">${esc((a.ign || "?").trim().charAt(0).toUpperCase())}</span>
+        <div class="mx-who"><div class="mx-name">${esc(a.ign || "Applicant")}${isConsider(r) ? ` <span class="tg s-warn" title="Referred by ${esc(cleanName(r.referred_by) || "-")}">For Consideration: ${esc(cleanName(r.referred_to))}</span>` : ""}</div>
+        <div class="mx-sub"><span class="mx-st"><i></i>${esc(statusLabel(sg))}</span> &middot; ${esc(a.discord || "-")} &middot; submitted ${esc(fmt(r.created_at))}</div></div>
+        <div class="mx-tools">
+            <button class="s mx-cmbtn ${showCm ? "on" : ""}" data-act="cmtoggle">Comments <span class="mx-n">${cs.length}</span></button>
+            <button class="mx-ic ${st == "accepted" ? "on" : ""}" data-act="status" data-v="accepted" title="${accOff ? "Accept (locked until the knowledge test is submitted)" : "Accept"}" ${accOff ? "disabled" : ""}>${ICO_HEART}</button>
+            <div class="mx-menuwrap"><button class="mx-ic ${appMenu ? "on" : ""}" data-act="appmenu" title="More actions">${ICO_DOTS}</button>${menu}</div>
+        </div>
+    </div>`;
+    var answers = ALL.map(q => `<div class="bub in"><b>${esc(q.l)}</b><div>${esc(a[q.id] || "-")}</div></div>`).join("");
+    var note = esc(!r.decision_note || Object.values(AUTO_NOTES).includes(r.decision_note) ? (st == "pending" ? autoStatusNote(sg) : (r.decision_note || "")) : r.decision_note);
+    var body = `<div class="mx-body">
+        ${!canAccept && st == "pending" ? `<div class="mx-hint">Accepting is locked until the applicant submits the knowledge test.</div>` : ""}${sg == "final" ? `<div class="mx-hint">Knowledge test received. Ready for your final decision.</div>` : ""}
+        ${referCard(r)}${editCard(r)}${knowledgeTestCard(r)}
+        <div class="mx-sec">Answers</div>${answers}
+        <div class="mx-sec">Message the applicant sees</div>
+        <div class="card"><div class="mu" style="margin-bottom:8px">Reference: ${esc(r.ref || "-")}</div><textarea id="dn" placeholder="Optional message the applicant sees on the status page">${note}</textarea><button class="p" data-act="savenote">Save message</button></div>
+    </div>`;
+    var chat = showCm ? `<div class="mx-chat"><div class="mx-chathead"><b>Comments</b><span class="mu">Only logged-in admins can see these</span></div>
+        <div class="mx-cmlist" id="cmlist">${cs.map(c => { var mine = cleanName(c.author) == cleanName(me); return `<div class="bub ${mine ? "me" : "in"}"><div class="bub-h"><span>${esc(c.author)}</span><span>${esc(fmt(c.created_at))}</span><button class="bub-x" data-act="delcm" data-id="${c.id}" title="Delete comment">${ic("trash", 13)}</button></div><div>${esc(c.body)}</div></div>` }).join("") || `<p class="mu" style="margin:6px 0">No comments yet.</p>`}</div>
+        <div class="mx-compose"><textarea id="cb" rows="1" placeholder="Write a comment..."></textarea><button class="p" data-act="post">Send</button></div></div>` : "";
+    return head + body + chat
+}
 function vApps() {
-    var f = rows.filter(r => filt == "all" ? isOpen(r) : filt == "consider" ? isConsider(r) : stageOf(r) == filt);
-    return `<div class="qh"><div><h1>Applications</h1><p class="sub" style="margin:0">Review and manage staff applications</p></div><button class="s" data-act="exp">Export CSV</button></div><div class="app-tools"><div>${pills()}</div><span class="app-count">${f.length} application${f.length==1?"":"s"}</span></div>` + (f.length ? `<div class="qg ql">${f.map(appCard).join("")}</div>`: `<div class="card mu">Nothing here.</div>`);
+    var f = appFiltered(), r = cur ? rows.find(x => String(x.id) == String(cur)) : null; if (cur && !r) cur = null;
+    return `<div class="msgx ${r ? "has-cur" : ""}">
+        <aside class="mx-list">
+            <div class="mx-head"><h1>Applications</h1><button class="s" data-act="exp">Export CSV</button></div>
+            <div class="mx-search">${ic("search", 16)}<input id="aq" placeholder="Search applicants..." value="${esc(appQ)}" autocomplete="off"></div>
+            <div class="mx-filt">${pills()}</div>
+            <div class="mx-count" id="acount">${f.length} application${f.length == 1 ? "" : "s"}</div>
+            <div class="mx-items" id="alist">${appItems(f)}</div>
+        </aside>
+        <section class="mx-main">${r ? appPanel(r) : `<div class="mx-empty"><div class="mx-empty-ic">${ic("doc", 30)}</div><b>Select an application</b><span class="mu">Pick one from the list to review it.</span></div>`}</section>
+    </div>`
 }
 function knowledgeTestFor(appId) {
     return ktests.find(x => String(x.application_id) == String(appId)) || null
@@ -3369,6 +3557,7 @@ function vDetail() {
         <div class="bar">
             <button class="s ${sg=="pending"?"on":""}" data-act="status" data-v="pending">Under Review</button>
             <button class="p ${!canAccept && st!="accepted" ? "disabled" : ""}" data-act="status" data-v="accepted"${!canAccept && st!="accepted" ? ' disabled title="Knowledge test must be submitted first"' : ""}>Accepted</button>
+            <button class="s ${st=="interview"?"on":""}" data-act="status" data-v="interview">For Interview</button>
             <button class="s ${st=="rejected"?"on":""}" data-act="status" data-v="rejected">Not Selected</button>
             <button class="s" data-act="toroster">+ Add to roster</button>
             ${st == "pending" && !(r.edit_allowed && r.edit_code) ? `<button class="s" data-act="allowedit">Allow applicant to edit</button>` : ""}
@@ -3626,7 +3815,7 @@ async function acceptApp(r) {
 const hideSr = () => {
     $("sres").classList.add("hide"); $("gq").value = ""
 }; async function onClick(ev) {
-    if (!ev.target.closest(".srch")) $("sres").classList.add("hide"); if (!ev.target.closest(".sb") && !ev.target.closest("#mbtn")) $("app").classList.remove("menu-open"); if (!ev.target.closest(".nw")) $("nmenu").classList.add("hide"); if (!ev.target.closest(".pf")) $("pmenu").classList.add("hide"); var t = ev.target.closest("[data-act]"); if (!t) return; var act = t.dataset.act; if (act != "menu" && act != "grp" && act != "pm" && t.closest(".sb")) $("app").classList.remove("menu-open"); var id = t.dataset.id, v = t.dataset.v, g = i => $(i).value.trim(); var run = async p => {
+    if (!ev.target.closest(".srch")) $("sres").classList.add("hide"); if (!ev.target.closest(".sb") && !ev.target.closest("#mbtn")) $("app").classList.remove("menu-open"); if (!ev.target.closest(".nw")) $("nmenu").classList.add("hide"); if (!ev.target.closest(".pf")) $("pmenu").classList.add("hide"); var t = ev.target.closest("[data-act]"); if (!t) { if (appMenu) { appMenu = false; render() } return } var act = t.dataset.act; if (act != "appmenu" && appMenu) appMenu = false; if (act != "menu" && act != "grp" && act != "pm" && t.closest(".sb")) $("app").classList.remove("menu-open"); var id = t.dataset.id, v = t.dataset.v, g = i => $(i).value.trim(); var run = async p => {
         var r = await p; if (r.error) {
             alert(r.error.message); return false
         }
@@ -3666,6 +3855,10 @@ const hideSr = () => {
         $("nmenu").classList.add("hide"); view = "loa"; cur = null; render(); scrollTo(0, 0); $("l_ign").focus()
     } else if (act == "newros") {
         $("nmenu").classList.add("hide"); view = "roster"; cur = null; editR = null; render(); scrollTo(0, 0); $("r_ign").focus()
+    } else if (act == "cmtoggle") {
+        showCm = !showCm; render(); var cl = $("cmlist"); if (cl) cl.scrollTop = cl.scrollHeight
+    } else if (act == "appmenu") {
+        appMenu = !appMenu; render()
     } else if (act == "filt") {
         filt = v; render()
     } else if (act == "open") {
@@ -3914,6 +4107,8 @@ const hideSr = () => {
 function onInput(e) {
     var t = e.target; if (t.id == "r_rk") pfRank(); if (t.id == "gq") {
         var q = t.value.trim(); $("sres").innerHTML = q ? searchHtml(q): ""; $("sres").classList.toggle("hide", !q)
+    } else if (t.id == "aq") {
+        appQ = t.value; var fl = appFiltered(), al = $("alist"); if (al) al.innerHTML = appItems(fl); var ac = $("acount"); if (ac) ac.textContent = fl.length + " application" + (fl.length == 1 ? "" : "s")
     } else if (t.id == "s_acc") {
         cfg.accent = t.value; saveCfg(); applyCfg()
     } else if (t.id == "s_brand") {
@@ -3962,7 +4157,7 @@ function init() {
         if (!t) return;
         e.preventDefault();
         e.stopPropagation();
-        cur = t.dataset.id;
+        cur = t.dataset.id; showCm = false; appMenu = false;
         view = "apps";
         render();
         scrollTo(0, 0);
@@ -4589,11 +4784,12 @@ $("stf").addEventListener("submit", async function(e) {
         if (!kr.error && kr.data && kr.data[0]) kt = kr.data[0];
     }
     var stage = d.status != "pending" ? d.status : !kt ? "pending" : kt.status == "submitted" ? "final" : "ktest";
-    var LAB = { pending: "Under review", ktest: "Pending knowledge test", final: "Final review", accepted: "Accepted", rejected: "Not selected this time" };
+    var LAB = { pending: "Under review", ktest: "Pending knowledge test", final: "Final review", interview: "For interview", accepted: "Accepted", rejected: "Not selected this time" };
     var AUTO = {
         pending: "Your application is currently being reviewed by the Advisory Team. Please check this page again later for updates.",
         ktest: "Your application passed the first review. Please answer the knowledge test below. Your answers go straight to the Advisory Team.",
         final: "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision.",
+        interview: "Your application has been shortlisted for an interview with the Advisory Team. Please watch your Discord DMs for the schedule, then check this page again for updates.",
         accepted: "Your application has been accepted by the Advisory Team.",
         rejected: "Your application was reviewed but was not selected this time."
     };
@@ -4601,7 +4797,8 @@ $("stf").addEventListener("submit", async function(e) {
         "Your application has been reviewed and accepted by the Advisory Team. Please check your application status for the latest update.",
         "Your application has been reviewed but was not selected this time. Please check your application status for the latest update.",
         "Your application passed the first review. Please answer the knowledge test on the status page, then check back for updates.",
-        "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision."];
+        "Thank you! Your knowledge test was received. Your application is now in final review by the Advisory Team. Please check this page again later for the decision.",
+        "Your application has been shortlisted for an interview with the Advisory Team. Please watch your Discord DMs for the schedule, then check this page again for updates."];
     var custom = d.note && STOCK.indexOf(d.note) < 0 ? d.note : "";
     var mk = function(s) {
         return '<h2 style="margin:0 0 6px">' + esc(LAB[s]) + '</h2><div class="mu">Reference ' + esc(c) + (d.submitted ? ' &middot; submitted ' + esc(fmt(d.submitted)) : '') + '</div><p style="margin:14px 0 0;color:#cfd6e4;white-space:pre-wrap">' + esc(custom || AUTO[s]) + '</p>'
