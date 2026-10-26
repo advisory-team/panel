@@ -1300,8 +1300,25 @@ input:disabled {
     }
 }
 
-</style></head>
+</style>
+<style id="loading-fx">
+/* Loading effects: top progress bar, button spinner, and the admin-access overlay */
+#topbar{position:fixed;top:0;left:0;height:3px;width:0;opacity:0;z-index:9999;pointer-events:none;background:linear-gradient(90deg,#f5a524,#ffd27a);box-shadow:0 0 10px rgba(245,165,36,.75)}
+.btn.busy{pointer-events:none}
+.btn.busy::after{content:"";display:inline-block;width:14px;height:14px;margin-left:8px;vertical-align:-2px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ldspin .6s linear infinite}
+.ldov{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;background:rgba(5,8,13,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transition:opacity .2s}
+.ldov[hidden]{display:none}
+.ldov.on{opacity:1}
+.ldbox{text-align:center;color:#eef1f7;font:600 16px/1.4 "Plus Jakarta Sans",system-ui,sans-serif;padding:0 20px}
+.ldbox span{display:block;margin-top:3px;min-height:1.4em;color:#98a1b5;font-weight:400;font-size:13px}
+.ldring{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 20%,#f5a524);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));animation:ldspin .8s linear infinite}
+@keyframes ldspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ldring{animation-duration:2.4s}.btn.busy::after{animation-duration:2.4s}}
+</style>
+</head>
 <body>
+<div id="topbar"></div>
+<div class="ldov" id="ldov" hidden role="status" aria-live="polite"><div class="ldbox"><div class="ldring"></div><b id="ldt">Verifying access</b><span id="lds"></span></div></div>
 
 <!--  NAV  -->
 <header class="nav">
@@ -2588,7 +2605,7 @@ th {
 :host(.light) .menu,:host(.light) .sres {
     box-shadow:0 10px 30px rgba(0,0,0,.12)
 }
-:host(.nohead) .hd,:host(.nohead) .ab.dl {
+:host(.nohead) .hd:not(.perm),:host(.nohead) .ab.dl:not(.perm) {
     display:none
 }
 @media(max-width:900px) {
@@ -3210,7 +3227,7 @@ input,textarea,select{border-radius:12px}
 
 /* ===== Neutral pass: flat, monochrome, no glow ===== */
 :host,.app,#login{--txr:236,236,238}
-.app,#login{--pg:#0b0b0d;--card:#131316;--bd:#232328;--sb:#0b0b0d;--in:#0e0e10;--chip:#1b1b1f;--tx:#ececee;--mu:#8b8b94;--hv:rgba(255,255,255,.04);--hv2:rgba(255,255,255,.08);--glow:transparent;--inv:#0b0b0d;--ghost:rgba(255,255,255,.04);--ghost2:rgba(255,255,255,.08)}
+.app,#login{--pg:#05080d;--card:#0d131c;--bd:#1b2432;--sb:#070b11;--in:#080d14;--chip:#121a26;--tx:#eef2f8;--mu:#93a0b6;--hv:rgba(var(--ar,38,212,230),.07);--hv2:rgba(var(--ar,38,212,230),.15);--glow:rgba(var(--ar,38,212,230),.10);--inv:#05080d;--ghost:rgba(255,255,255,.04);--ghost2:rgba(255,255,255,.08)}
 .app{background:var(--pg)}
 .app[data-theme="light"]{--txr:24,24,27;--pg:#f5f5f3;--card:#ffffff;--bd:#e4e4e0;--sb:#ffffff;--in:#f4f4f1;--chip:#efefec;--tx:#18181b;--mu:#71717a;--hv:rgba(0,0,0,.035);--hv2:rgba(0,0,0,.07);--inv:#ffffff;--ghost:rgba(0,0,0,.04);--ghost2:rgba(0,0,0,.08);background:var(--pg)}
 .top{background:color-mix(in srgb,var(--pg) 94%,transparent);backdrop-filter:blur(14px)}
@@ -3271,6 +3288,95 @@ main h1,.u-head h1{font-size:30px;font-weight:650}
 </style>
 
 
+<style id="amber-command-skin">
+/* Command-center skin on the landing page palette. Follows the Settings accent picker. */
+.app,#login{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+h1,.stat .sn{font-family:"Instrument Serif",Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-.01em}
+*{scrollbar-width:thin;scrollbar-color:rgba(var(--ar,38,212,230),.35) transparent}
+
+/* Background: ink with a faint grid and one warm glow */
+.app{background:radial-gradient(900px 420px at 85% -140px,rgba(var(--ar,38,212,230),.11),transparent),linear-gradient(rgba(var(--ar,38,212,230),.032) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(var(--ar,38,212,230),.032) 1px,transparent 1px) 0 0/44px 44px,var(--pg)}
+
+/* Sidebar: active page gets a glowing marker */
+.sb{background:linear-gradient(180deg,rgba(var(--ar,38,212,230),.06),transparent 38%),var(--sb);border-right:1px solid var(--bd)}
+.nv{position:relative;border-radius:10px;padding:10px 12px}
+.nv:hover{background:rgba(var(--ar,38,212,230),.07)}
+.nv.on{background:rgba(var(--ar,38,212,230),.12);box-shadow:none;color:var(--hi,var(--rd2))}
+.nv.on::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--rd);box-shadow:0 0 12px rgba(var(--ar,38,212,230),.75)}
+.av{box-shadow:0 0 0 2px var(--pg),0 0 0 4px rgba(var(--ar,38,212,230),.55)}
+.rp-mini{background:var(--rd);color:var(--ont,#1a1200)}
+
+/* Top bar and search */
+.srch input{border-radius:12px;transition:border-color .15s,box-shadow .15s}
+.srch input:focus{outline:none;border-color:var(--rd);box-shadow:0 0 0 3px rgba(var(--ar,38,212,230),.2)}
+.ib{border-radius:10px}.ib:hover{border-color:rgba(var(--ar,38,212,230),.5)}
+
+/* Buttons: amber is for actions */
+.nw .p,.p{background:var(--rd);color:var(--ont,#1a1200);font-weight:700;border-radius:10px;box-shadow:0 8px 20px -10px rgba(var(--ar,38,212,230),.9)}
+.nw .p:hover,.p:hover{filter:brightness(1.08)}
+.chip.on{background:rgba(var(--ar,38,212,230),.16);border-color:var(--rd);color:var(--hi,var(--rd2))}
+
+/* Cards */
+.stat,.dash-panel,.card,.app-row,.qc,.u-card{border-radius:14px;border:1px solid var(--bd);background:linear-gradient(180deg,rgba(var(--ar,38,212,230),.04),transparent 55%),var(--card)}
+.app-row,.qc,.rp-card{transition:border-color .15s}
+.app-row:hover,.qc:hover,.rp-card:hover{border-color:rgba(var(--ar,38,212,230),.4)}
+.stat .sn{font-size:40px;font-weight:400;letter-spacing:-.01em}
+.tg{border-radius:999px}
+
+/* Live status dots pulse softly, nothing else moves */
+@keyframes amber-ping{0%{box-shadow:0 0 0 0 rgba(var(--ar,38,212,230),.55)}70%,100%{box-shadow:0 0 0 7px rgba(var(--ar,38,212,230),0)}}
+.review-status i,.u-al i{animation:amber-ping 2.4s ease-out infinite}
+
+/* Activity: keep names inline so a message reads as one sentence */
+.ac-row .bub{max-width:min(78%,560px)}
+.ac-row .bub b{display:inline;margin:0;font-size:inherit;font-weight:700;color:var(--hi,var(--rd2))}
+.ac-row .bub-h{margin-bottom:4px}
+.ac-row .bub-h span:first-child{color:var(--mu)}
+/* Accounts and permissions */
+.pcrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:10px}
+.pcheck{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:14px}
+.pcheck input{width:auto;margin:0;accent-color:var(--rd)}
+.pcrow select,#s_na_role{width:auto;min-width:240px}
+/* Login button spinner */
+@keyframes adm-spin{to{transform:rotate(360deg)}}
+.p.busy{pointer-events:none;opacity:.85}
+.p.busy::after{content:"";display:inline-block;width:14px;height:14px;margin-left:8px;vertical-align:-2px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:adm-spin .6s linear infinite}
+/* Login */
+#login .card{border-radius:18px;box-shadow:0 30px 80px -34px rgba(var(--ar,38,212,230),.45)}
+
+/* Keyboard focus and reduced motion */
+:is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--rd);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ===== Mobile and tablet ===== */
+.mtab{display:none}
+@media(max-width:900px){
+  /* Bottom tab bar replaces the sidebar for everyday navigation */
+  .mtab{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:50;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--sb) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--bd)}
+  .mtab button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;border:0;background:transparent;color:var(--mu);font:inherit;font-size:10.5px;font-weight:600;border-radius:12px;cursor:pointer}
+  .mtab button.on{color:var(--hi,var(--rd2));background:rgba(var(--ar,38,212,230),.12)}
+  .mtab button.on::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--rd);box-shadow:0 0 10px rgba(var(--ar,38,212,230),.7)}
+  .mtab .ct{position:absolute;top:4px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--rd);color:var(--ont,#1a1200);font-size:10px;line-height:16px;text-align:center;font-weight:700}
+  main{padding:6px 14px calc(92px + env(safe-area-inset-bottom,0px))}
+  .top{padding-top:calc(10px + env(safe-area-inset-top,0px));background:color-mix(in srgb,var(--pg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  /* Comfortable tap targets, and 16px inputs so iPhones don't zoom in */
+  .ib,.p,.s,.ab,.chip{min-height:42px}
+  input,select,textarea,.srch input{font-size:16px}
+  .stat .sn{font-size:32px}
+  h1{font-size:26px}
+  .nv{padding:12px}
+  #login .card{padding:20px}
+}
+@media(max-width:480px){
+  main{padding-left:12px;padding-right:12px}
+  .mtab button{font-size:10px}
+  .u-grid{gap:10px}
+  .app-actions{flex-wrap:wrap}
+  .nw .p{padding:0 12px}
+}
+/* Big screens: keep content readable instead of stretching */
+@media(min-width:1600px){main{max-width:1500px;margin-left:auto;margin-right:auto;width:100%}}
+</style>
+
 <div id="login" class="lg"><div>
   <button class="s" data-act="home" style="margin-bottom:14px">&larr; Back to main page</button>
   <div class="ahero"><div class="bnr"><img class="bi" alt=""><div><div class="bt">Advisory Team</div><div class="bs">Public Relations</div></div></div></div>
@@ -3298,6 +3404,7 @@ main h1,.u-head h1{font-size:30px;font-weight:650}
  <div class="tpf"><button class="tpf-b" data-act="pm2"><span class="av" id="tav">A</span><span class="tpi"><b id="tname"></b><small id="trole"></small></span></button><div class="menu hide" id="pmenu2"><button data-act="home">Back to main page</button><button data-act="out">Log out</button></div></div></div></header>
  <div class="ahero hide" id="hero"><div class="bnr"><img class="bi" alt=""><div><div class="bt">Advisory Team</div><div class="bs">Public Relations &middot; City of Manila Roleplay</div></div></div></div>
  <main id="main"></main>
+ <nav class="mtab" id="mtab" aria-label="Main"></nav>
 </div></div>
 </template>
 
@@ -3380,14 +3487,15 @@ const saveCfg = () => {
     h = h.replace("#", ""); if (h.length == 3) h = h.split("").map(c => c + c).join(""); return[parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
 }; const toHex = a => "#" + a.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join(""); const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t); const MODES = {
     dark: {
-        bg: "#080a0e", sb: "rgba(9,10,13,.96)", card: "rgba(18,20,25,.82)", bd: "rgba(255,255,255,.08)", tx: "#eef1f7", mu: "#98a1b5", in: "rgba(8,12,20,.6)", chip: "rgba(255,255,255,.08)"
+        bg: "#05080d", sb: "#070b11", card: "#0d131c", bd: "#1b2432", tx: "#eef2f8", mu: "#93a0b6", in: "#080d14", chip: "#121a26"
     }, darker: {
-        bg: "#000000", sb: "#040405", card: "rgba(16,16,20,.82)", bd: "rgba(255,255,255,.07)", tx: "#f2f2f4", mu: "#8d8d99", in: "rgba(0,0,0,.5)", chip: "rgba(255,255,255,.07)"
+        bg: "#05080d", sb: "#070b11", card: "#0d131c", bd: "#1b2432", tx: "#eef2f8", mu: "#93a0b6", in: "#080d14", chip: "#121a26"
     }, light: {
         bg: "#eef1f7", sb: "#ffffff", card: "#ffffff", bd: "#dfe3ec", tx: "#1b1d2a", mu: "#5d6478", in: "#f6f7fa", chip: "#e9ecf3"
     }
 }; var view = cfg.start || "dash", filt = "all", cur = null, editR = null, grp = true, rows = [], cm = [], loa = [], ros = [], inf = [], ann = [], rup = [], site = {}, aud = [], resg = [], ktests = [], isHead = true, editA = null, editU = null, pickRef = null, adminList = null, me = "", msg = ""; window.__advAdminRole = ""; function applyCfg() {
-    var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
+    if (!/^#[0-9a-f]{6}$/i.test(cfg.accent || "") || (function(c) { return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2] })(hex2(cfg.accent)) < 70) cfg.accent = DEF.accent;
+    var m = MODES[cfg.mode] || MODES.dark, st = host.style, a = hex2(cfg.accent || "#26d4e6"), light = cfg.mode == "light", set = (k, v) => st.setProperty(k, v); var rgb = a.map(Math.round).join(","); set("--ar", rgb); ["bg", "sb", "card", "bd", "tx", "mu", "in", "chip"].forEach(k => set("--" + k, m[k])); set("--rd", cfg.accent); set("--rd2", toHex(light ? mix(a, [0, 0, 0], .3): mix(a, [255, 255, 255], .35))); set("--rd3", toHex(mix(a, [0, 0, 0], .25))); set("--hv", "rgba(" + rgb + "," + (light?.08: .09) + ")"); set("--hv2", "rgba(" + rgb + ",.18)"); set("--glow", "rgba(" + rgb + "," + (light?.1: .12) + ")"); set("--ont", (0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2]) / 255 > .6 ? "#06141a": "#ffffff"); set("--fs", cfg.font + "px"); set("color-scheme", light ? "light": "dark"); host.classList.toggle("light", light); host.classList.toggle("compact", !!cfg.compact); var nm = (cfg.brand || "Advisory Team").trim() || "Advisory Team"; $("bname").textContent = nm; if (active) document.title = nm + " - Admin"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash"));
 }
 const today = () => new Date().toISOString().slice(0, 10); const fmt = d => d ? new Date(d).toLocaleString(): ""; const activeLoa = l => l.status != "withdrawn" && (!l.end_date || l.end_date >= today()); const loaState = l => l.status == "withdrawn" ? "withdrawn" : activeLoa(l) ? "active" : "ended"; const loaCls = { active: "s-active", ended: "s-ended", withdrawn: "s-warn" }; const activeInf = i => !i.expires_on || i.expires_on >= today(); const INF_WARN = 3; const infN = m => inf.filter(i => activeInf(i) && (i.roster_id == m.id || (!i.roster_id && (i.ign || "").toLowerCase() == (m.ign || "").toLowerCase()))).length; const infBadge = m => {
     var n = infN(m); return `<span class="tg ${n>=INF_WARN?"s-rejected":n?"s-warn":"s-active"}">${n}</span>${n>=INF_WARN?' <span class="er" title="Review needed">&#9888;</span>':""}`
@@ -3404,6 +3512,46 @@ const toMe = r => isConsider(r) && cleanName(r.referred_to).toLowerCase() == cle
     var m = Math.max(0, Math.round((Date.now() - new Date(d)) / 6e4)); return m < 1 ? "just now": m < 60 ? m + " mins ago": m < 1440 ? Math.round(m / 60) + " hrs ago": Math.round(m / 1440) + " days ago"
 };
 // ---- auth ----
+const OWNER_EMAILS = ["rio@gmail.com", "sebyo@advisory.team"]; // owners: Rio and Sebyo (edit if a login email differs)
+const ROLE_LIST = ["Director of Public Relations", "Public Relations", "Head Advisor", "Staff"];
+function roleOpts(sel) { return ROLE_LIST.map(r => `<option value="${r}" ${r == sel ? "selected" : ""}>${r}</option>`).join("") }
+const PERMS = [["audit_restore", "Restore items from the audit log"], ["audit_delete", "Delete audit log entries"]];
+var accts = null;
+function isOwner() { return OWNER_EMAILS.indexOf((window.__advAdminEmail || "").toLowerCase()) > -1 }
+function canDo(p) { return isOwner() || (window.__advPerms || []).indexOf(p) > -1 }
+async function callAcct(body) {
+    var r = await sb.functions.invoke("admin-accounts", { body: body });
+    if (r.error) {
+        var m = r.error.message || "Request failed.";
+        try { var j = await r.error.context.json(); if (j && j.error) m = j.error } catch (e) { if (/failed to send|not found/i.test(m)) m = "The admin-accounts function is not deployed yet." }
+        return { error: m }
+    }
+    return r.data || {}
+}
+async function loadAccts() {
+    if (!isOwner()) return;
+    var r = await callAcct({ action: "list" }), box = $("acctlist"); if (!box) return;
+    if (r.error) { box.innerHTML = `<div class="card er">${esc(r.error)}</div>`; return }
+    accts = r.accounts || []; box.innerHTML = acctList()
+}
+function permChecks(attr, have) {
+    return PERMS.map(p => `<label class="pcheck"><input type="checkbox" ${attr} value="${p[0]}" ${(have || []).indexOf(p[0]) > -1 ? "checked" : ""}> <span>${p[1]}</span></label>`).join("")
+}
+function acctList() {
+    if (!accts) return `<div class="card mu">Loading accounts...</div>`;
+    if (!accts.length) return `<div class="card mu">No accounts yet.</div>`;
+    return accts.map(a => {
+        var head = `<div><b>${esc(a.name || a.email)}</b> <span class="mu">${esc(a.email)}${a.role ? " &bull; " + esc(a.role) : ""}</span></div>`;
+        if (a.owner) return `<div class="card">${head}<p class="mu" style="margin:6px 0 0">Owner: full access.</p></div>`;
+        return `<div class="card">${head}<div class="pcrow"><select data-rl="${a.id}">${ROLE_LIST.indexOf(a.role) < 0 ? `<option value="" selected>${esc(a.role || "No role set")}</option>` : ""}${roleOpts(a.role)}</select>${permChecks('data-pm="' + a.id + '"', a.perms)}</div><div class="pcrow"><button class="p" data-act="saveperms" data-id="${a.id}">Save permissions</button><button class="s dn" data-act="delacct" data-id="${a.id}">Remove account</button></div></div>`
+    }).join("")
+}
+function secHtml(row) {
+    var f = (id, type, ph, ac) => `<input id="${id}" type="${type}" autocomplete="${ac}" placeholder="${ph}" style="margin:0;width:100%">`;
+    var out = `<h2 style="margin:22px 0 10px">Change password</h2><div class="card">` + row("Current password", f("pw_cur", "password", "Current password", "current-password")) + row("New password", f("pw_new", "password", "At least 8 characters", "new-password")) + row("Confirm new password", f("pw_new2", "password", "Type it again", "new-password")) + `<div style="padding-top:14px"><button class="p" data-act="changepw">Change password</button></div></div>`;
+    if (!isOwner()) return out;
+    return out + `<h2 style="margin:22px 0 4px">Admin accounts</h2><p class="mu" style="margin:0 0 10px">Only you can see this. Create an account and choose what it is allowed to do.</p><div class="card">` + row("Admin name (IGN)", f("s_na_name", "text", "e.g. Juan_Dela", "off")) + row("Password", f("s_na_pw", "password", "At least 8 characters", "new-password")) + row("Role", `<select id="s_na_role">${roleOpts("")}</select>`) + row("Permissions", `<div class="pcrow" style="margin:0">${permChecks('class="s_na_perm"', [])}</div>`) + `<div style="padding-top:14px"><button class="p" data-act="createadmin">Create account</button></div></div><h3 style="margin:18px 0 8px">Existing accounts</h3><div id="acctlist">${acctList()}</div>`
+}
 const toEmail = v => {
     v = v.trim().toLowerCase().replace(/\s+/g, "_"); return v.includes("@") ? v: v + "@advisory.team"
 }; async function getAdminSession() {
@@ -3430,7 +3578,7 @@ async function check() {
         if (!me) me = (u.email || "").split("@")[0].split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     }
     $("login").classList.toggle("hide", !!ses); $("app").classList.toggle("hide", !ses); host.classList.toggle("nohead", !isHead); if (ses) {
-        $("pname").textContent = me; var md2 = ses.user.user_metadata || {}; window.__advAdminRole = (md2.role_name || "").trim(); window.__advAdminEmail = (ses.user.email || "").toLowerCase(); var rk = (ses.user.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_")); $("prole").textContent = (md2.role_name || "").trim() || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin")); $("av").textContent = me.charAt(0).toUpperCase(); load()
+        $("pname").textContent = me; var md2 = ses.user.user_metadata || {}; window.__advAdminRole = (md2.role_name || "").trim(); window.__advAdminEmail = (ses.user.email || "").toLowerCase(); window.__advPerms = (ses.user.app_metadata || {}).perms || []; var rk = (ses.user.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_")); $("prole").textContent = (md2.role_name || "").trim() || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin")); $("av").textContent = me.charAt(0).toUpperCase(); load()
     }
 }
 //  data
@@ -3468,7 +3616,7 @@ function navHtml() {
     var it = (v, l, i, c, sub) => `<button class="nv ${sub?"sub2":""} ${view==v?"on":""}" data-act="nav" data-v="${v}">${sub?"":ic(i)}<span>${l}</span>${c?`<span class="ct">${c}</span>`:""}</button>`; return it("dash", "Dashboard", "grid") + it("apps", "Applications", "doc", needN()) + it("ann", "Announcements", "bell", ann.length) + it("act", "Activity", "chat") + `<button class="nv ${grp?"open":""}" data-act="grp">${ic("folder")}<span>Staff Files</span><span class="ch">${ic("chev",14)}</span></button>` + (grp ? it("loa", "LOA", "", loa.filter(activeLoa).length, 1) + it("loah", "LOA History", "", 0, 1) + it("roster", "Roster", "", ros.length, 1) + it("inf", "Infractions", "", inf.filter(activeInf).length, 1) + it("rup", "Roster Updates", "", rup.length, 1) + it("res", "Resignations", "", resg.filter(r => (r.status || "pending") == "pending").length, 1) + it("aud", "Audit Log", "", aud.length, 1): "") + it("site", "Site Controls", "sliders") + it("set", "Settings", "sliders") + `<button class="nv home" data-act="home">${ic("back")}<span>Back to main page</span></button>`;
 }
 function render() {
-    $("nav").innerHTML = navHtml(); chrome(); var p = needN() + rows.filter(r => toMe(r) && stageOf(r) == "ktest").length; $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? vApps(): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): view == "act" ? vAct(): vRoster());
+    $("nav").innerHTML = navHtml(); chrome(); var p = needN() + rows.filter(r => toMe(r) && stageOf(r) == "ktest").length; $("bell").innerHTML = ic("bell", 20) + (p ? '<i class="dot"></i>': ""); $("bell").title = p + " pending"; $("hero").classList.toggle("hide", !(cfg.banner && view == "dash")); $("main").innerHTML = (msg ? `<div class="card er">${esc(msg)}</div>`: "") + (view == "dash" ? vDash(): view == "set" ? vSet(): view == "apps" ? vApps(): view == "loa" ? vLoa(): view == "loah" ? vLoaH(): view == "inf" ? vInf(): view == "ann" ? vAnn(): view == "rup" ? vRup(): view == "res" ? vRes(): view == "site" ? vSite(): view == "aud" ? vAud(): view == "act" ? vAct(): vRoster()); if (view == "set" && isOwner()) loadAccts();
 }
 const isOpen = r => { var s = stageOf(r); return s != "accepted" && s != "rejected" };
 function pills() {
@@ -3536,6 +3684,8 @@ function chrome() {
     $("tnav").innerHTML = tb("dash", "Overview") + tb("apps", "Applications", pend) + tb("ann", "Announcements") + tb("act", "Activity") + `<span class="tgm"><button class="${staff.indexOf(view) > -1 ? "on" : ""}" data-act="tgrp">Staff Files ${ic("chev", 13)}</button>${tgrp ? `<div class="tmenu">${SI.map(x => `<button class="${view == x[0] ? "on" : ""}" data-act="nav" data-v="${x[0]}">${x[1]}</button>`).join("")}</div>` : ""}</span>` + tb("site", "Site Controls") + tb("set", "Settings");
     var rb = (v, i, t) => `<button class="${view == v ? "on" : ""}" data-act="nav" data-v="${v}" title="${t}">${ic(i, 19)}${v == "apps" && pend ? '<i class="rdot"></i>' : ""}</button>`;
     $("railnav").innerHTML = rb("dash", "grid", "Overview") + rb("apps", "doc", "Applications") + rb("ann", "bell", "Announcements") + rb("act", "chat", "Activity") + rb("roster", "users", "Roster") + rb("site", "sliders", "Site Controls");
+    var mt = (v, i, l, c) => `<button class="${view == v ? "on" : ""}" data-act="nav" data-v="${v}">${ic(i, 20)}<span>${l}</span>${c ? `<span class="ct">${c}</span>` : ""}</button>`;
+    if ($("mtab")) $("mtab").innerHTML = mt("dash", "grid", "Overview") + mt("apps", "doc", "Apps", pend) + mt("loa", "cal", "LOA") + mt("roster", "users", "Roster") + `<button data-act="menu">${ic("menu", 20)}<span>More</span></button>`;
     $("rtheme").innerHTML = `<button class="${theme == "light" ? "on" : ""}" data-act="theme" data-v="light" title="Light mode">${ic("sun", 18)}</button><button class="${theme == "dark" ? "on" : ""}" data-act="theme" data-v="dark" title="Dark mode">${ic("moon", 18)}</button>`;
     $("rbot").innerHTML = `<button data-act="home" title="Back to main page">${ic("back", 18)}</button><button data-act="out" title="Log out">${ic("logout", 18)}</button>`;
     $("tav").innerHTML = $("av").innerHTML; $("tname").textContent = $("pname").textContent; $("trole").textContent = $("prole").textContent
@@ -3848,7 +3998,7 @@ function vAud() {
         var r = a.row_data || {
     }, x = r.answers || {
 }; return r.ign || x.ign || r.title || (r.body || "").slice(0, 40) || "-"
-}; var own = window.__advAdminEmail === "rio@gmail.com"; var cards = aud.map(a => `<div class="qc s-rejected" style="cursor:default"><div class="top2"><span class="tg">${esc(a.tbl)}</span><span style="display:flex;gap:6px"><button class="ab hd" data-act="audrestore" data-id="${a.id}">Restore</button>${own ? `<button class="ab dl sm" data-act="auddel" data-id="${a.id}" title="Permanently delete this log entry">${ic("trash",15)}Delete</button>` : ""}</span></div><h3>${esc(lbl(a))}</h3><div class="mu">Deleted by ${esc(a.actor||"-")} &bull; ${esc(fmt(a.created_at))}</div></div>`).join(""); return `<h1>Audit Log</h1><p class="sub">Everything that was deleted, and who did it. Head admins can restore items. Latest 100.${own ? " The owner can permanently delete log entries." : ""}</p>` + (own && aud.length ? `<div style="margin-bottom:14px"><button class="ab dl" data-act="audclear">${ic("trash",15)}Clear all logs</button></div>` : "") + (aud.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">Nothing deleted yet.</div>`);
+}; var own = canDo("audit_delete"); var cards = aud.map(a => `<div class="qc s-rejected" style="cursor:default"><div class="top2"><span class="tg">${esc(a.tbl)}</span><span style="display:flex;gap:6px"><button class="ab hd${canDo("audit_restore") ? " perm" : ""}" data-act="audrestore" data-id="${a.id}">Restore</button>${own ? `<button class="ab dl sm perm" data-act="auddel" data-id="${a.id}" title="Permanently delete this log entry">${ic("trash",15)}Delete</button>` : ""}</span></div><h3>${esc(lbl(a))}</h3><div class="mu">Deleted by ${esc(a.actor||"-")} &bull; ${esc(fmt(a.created_at))}</div></div>`).join(""); return `<h1>Audit Log</h1><p class="sub">Everything that was deleted, and who did it. Head admins can restore items. Latest 100.${own ? " You can permanently delete log entries." : ""}</p>` + (own && aud.length ? `<div style="margin-bottom:14px"><button class="ab dl perm" data-act="audclear">${ic("trash",15)}Clear all logs</button></div>` : "") + (aud.length ? `<div class="qg">${cards}</div>`: `<div class="card mu">Nothing deleted yet.</div>`);
 }
 function vRup() {
     var e = rup.find(x => x.id == editU) || {}; var names = ros.map(m => `<option value="${esc(m.ign)}"></option>`).join(""); var T = {
@@ -3977,7 +4127,7 @@ function vRoster() {
 <aside class="u-card rp-side"><h2>Roster Updates</h2>${ups}<button class="s" data-act="nav" data-v="rup" style="width:100%;margin-top:12px">View all updates</button></aside></div>`;
 }
 function vSet() {
-    var chip = (act, v, l, on) => `<button class="chip ${on?"on":""}" data-act="${act}" data-v="${v}">${l}</button>`; var PRE = [["#26d4e6", "Cyan"], ["#ff4455", "Red"], ["#a78bfa", "Purple"], ["#34d399", "Green"], ["#fbbf24", "Gold"], ["#f472b6", "Pink"], ["#60a5fa", "Blue"]]; var row = (l, c) => `<div class="set"><div><b>${l}</b></div><div>${c}</div></div>`; return `<h1>Settings</h1><p class="sub">Make the panel look the way you want</p><div class="card">` + row("Accent color", `<div class="chips" style="align-items:center">${PRE.map(p=>`<button class="sw ${cfg.accent==p[0]?"on":""}" title="${p[1]}" style="background:${p[0]}" data-act="acc" data-v="${p[0]}"></button>`).join("")}<input type="color" id="s_acc" value="${cfg.accent}" style="width:44px;height:32px;padding:0;border:0;background:none"></div>`) + row("Theme", `<div class="chips">${chip("mode","dark","Dark",cfg.mode=="dark")}${chip("mode","darker","Black",cfg.mode=="darker")}${chip("mode","light","Light",cfg.mode=="light")}</div>`) + row("Text size", `<div class="chips">${chip("font",14,"Small",cfg.font==14)}${chip("font",15,"Normal",cfg.font==15)}${chip("font",17,"Large",cfg.font==17)}</div>`) + row("Banner on dashboard", `<div class="chips">${chip("tog","banner",cfg.banner?"Shown":"Hidden",cfg.banner)}</div>`) + row("Compact cards", `<div class="chips">${chip("tog","compact",cfg.compact?"On":"Off",cfg.compact)}</div>`) + row("Start page", `<div class="chips">${chip("start","dash","Dashboard",cfg.start=="dash")}${chip("start","apps","Applications",cfg.start=="apps")}${chip("start","loa","LOA",cfg.start=="loa")}${chip("start","roster","Roster",cfg.start=="roster")}</div>`) + row("Admin display name", `<div class="chips" style="align-items:center"><input id="s_admin_name" value="${esc(me)}" maxlength="60" placeholder="Your display name" style="margin:0;flex:1"></div>`) + row("Admin role name", `<div class="chips" style="align-items:center"><input id="s_admin_role" value="${esc((window.__advAdminRole || ""))}" maxlength="60" placeholder="Your role name" style="margin:0;flex:1"></div><p class="mu" style="margin:6px 0 0">Both are saved to your Supabase Auth profile, so they persist after logout and on other devices.</p><button class="p" data-act="saveadminprofile">Save admin profile</button>`) + row("Panel name", `<input id="s_brand" value="${esc(cfg.brand)}" maxlength="30" placeholder="Advisory Team">`) + `<div style="padding-top:14px"><button class="s dn" data-act="reset">Reset to default</button></div></div><p class="mu">Panel appearance settings are saved in this browser.</p>`;
+    var chip = (act, v, l, on) => `<button class="chip ${on?"on":""}" data-act="${act}" data-v="${v}">${l}</button>`; var PRE = [["#26d4e6", "Cyan"], ["#f5a524", "Amber"], ["#ff4455", "Red"], ["#a78bfa", "Purple"], ["#34d399", "Green"], ["#fbbf24", "Gold"], ["#f472b6", "Pink"], ["#60a5fa", "Blue"]]; var row = (l, c) => `<div class="set"><div><b>${l}</b></div><div>${c}</div></div>`; return `<h1>Settings</h1><p class="sub">Make the panel look the way you want</p><div class="card">` + row("Accent color", `<div class="chips" style="align-items:center">${PRE.map(p=>`<button class="sw ${cfg.accent==p[0]?"on":""}" title="${p[1]}" style="background:${p[0]}" data-act="acc" data-v="${p[0]}"></button>`).join("")}<input type="color" id="s_acc" value="${cfg.accent}" style="width:44px;height:32px;padding:0;border:0;background:none"></div>`) + row("Theme", `<div class="chips">${chip("mode","dark","Dark",cfg.mode=="dark")}${chip("mode","darker","Black",cfg.mode=="darker")}${chip("mode","light","Light",cfg.mode=="light")}</div>`) + row("Text size", `<div class="chips">${chip("font",14,"Small",cfg.font==14)}${chip("font",15,"Normal",cfg.font==15)}${chip("font",17,"Large",cfg.font==17)}</div>`) + row("Banner on dashboard", `<div class="chips">${chip("tog","banner",cfg.banner?"Shown":"Hidden",cfg.banner)}</div>`) + row("Compact cards", `<div class="chips">${chip("tog","compact",cfg.compact?"On":"Off",cfg.compact)}</div>`) + row("Start page", `<div class="chips">${chip("start","dash","Dashboard",cfg.start=="dash")}${chip("start","apps","Applications",cfg.start=="apps")}${chip("start","loa","LOA",cfg.start=="loa")}${chip("start","roster","Roster",cfg.start=="roster")}</div>`) + row("Admin display name", `<div class="chips" style="align-items:center"><input id="s_admin_name" value="${esc(me)}" maxlength="60" placeholder="Your display name" style="margin:0;flex:1"></div>`) + row("Admin role name", `<div class="chips" style="align-items:center"><input id="s_admin_role" value="${esc((window.__advAdminRole || ""))}" maxlength="60" placeholder="Your role name" style="margin:0;flex:1"></div><p class="mu" style="margin:6px 0 0">Both are saved to your Supabase Auth profile, so they persist after logout and on other devices.</p><button class="p" data-act="saveadminprofile">Save admin profile</button>`) + row("Panel name", `<input id="s_brand" value="${esc(cfg.brand)}" maxlength="30" placeholder="Advisory Team">`) + `<div style="padding-top:14px"><button class="s dn" data-act="reset">Reset to default</button></div></div>${secHtml(row)}<p class="mu">Panel appearance settings are saved in this browser.</p>`;
 }
 function searchHtml(q) {
     q = q.toLowerCase(); var has = arr => arr.map(x => x == null ? "": x).join(" ").toLowerCase().includes(q); var A = rows.filter(r => has(Object.values(r.answers || {
@@ -4035,7 +4185,7 @@ const hideSr = () => {
     } else if (act == "home") {
         location.hash = "#top"
     } else if (act == "nav") {
-        view = v; cur = null; render(); scrollTo(0, 0)
+        if (window.loadBar) window.loadBar(); view = v; cur = null; render(); scrollTo(0, 0)
     } else if (act == "grp") {
         grp = !grp; render()
     } else if (act == "bell") {
@@ -4158,20 +4308,21 @@ const hideSr = () => {
         alert("Saved"); refresh(["site_settings"])
     }
 } else if (act == "auddel") {
-    if (window.__advAdminEmail !== "rio@gmail.com") return alert("Only the owner can delete audit logs.");
+    if (!canDo("audit_delete")) return alert("You do not have permission to delete audit logs.");
     if (!confirm("Permanently delete this log entry? It can no longer be restored.")) return;
     var dr = await sb.from("audit_log").delete().eq("id", id).select("id");
     if (dr.error) return alert(dr.error.message);
     if (!dr.data || !dr.data.length) return alert("Not deleted. Run audit_log_owner.sql in Supabase so the database allows it.");
     aud = aud.filter(x => String(x.id) != String(id)); render()
 } else if (act == "audclear") {
-    if (window.__advAdminEmail !== "rio@gmail.com") return alert("Only the owner can delete audit logs.");
+    if (!canDo("audit_delete")) return alert("You do not have permission to delete audit logs.");
     if (!confirm("Permanently delete ALL " + aud.length + " audit log entries? This cannot be undone.")) return;
     var ids = aud.map(x => x.id), cr = await sb.from("audit_log").delete().in("id", ids).select("id");
     if (cr.error) return alert(cr.error.message);
     if (!cr.data || !cr.data.length) return alert("Not deleted. Run audit_log_owner.sql in Supabase so the database allows it.");
     refresh(["audit_log"], true)
 } else if (act == "audrestore") {
+    if (host.classList.contains("nohead") && !canDo("audit_restore")) return alert("You do not have permission to restore items.");
     var au = aud.find(x => x.id == id); if (!au) return; if (!confirm("Restore this " + au.tbl + " entry?")) return; if (await run(sb.from(au.tbl).insert(au.row_data))) {
         await sb.from("audit_log").delete().eq("id", id); load()
     }
@@ -4277,6 +4428,37 @@ const hideSr = () => {
 } else if (act == "copyeditcode") {
     var ac = rows.find(x => x.id == cur);
     if (ac && ac.edit_code) { try { await navigator.clipboard.writeText(ac.edit_code); alert("Code copied.") } catch (e) { prompt("Copy this code:", ac.edit_code) } }
+} else if (act == "changepw") {
+    var cp = $("pw_cur").value, np = $("pw_new").value, np2 = $("pw_new2").value;
+    if (!cp || !np) return alert("Enter your current and new password.");
+    if (np.length < 8) return alert("New password must be at least 8 characters.");
+    if (np !== np2) return alert("The new passwords do not match.");
+    if (np === cp) return alert("Choose a password different from the current one.");
+    var cs = await getAdminSession(); if (!cs) return alert("Your admin session has expired. Please log in again.");
+    var chk = await sb.auth.signInWithPassword({ email: cs.user.email, password: cp });
+    if (chk.error) return alert("Current password is incorrect.");
+    var upd = await sb.auth.updateUser({ password: np });
+    if (upd.error) return alert(upd.error.message);
+    $("pw_cur").value = ""; $("pw_new").value = ""; $("pw_new2").value = ""; alert("Password changed.");
+} else if (act == "createadmin") {
+    if (!isOwner()) return alert("Only the owner can create accounts.");
+    var an = $("s_na_name").value.trim(), ap = $("s_na_pw").value;
+    if (!an) return alert("Enter the admin name (IGN).");
+    if (ap.length < 8) return alert("Password must be at least 8 characters.");
+    var cr = await callAcct({ action: "create", name: an, password: ap, role: $("s_na_role").value, perms: [].map.call(root.querySelectorAll(".s_na_perm:checked"), x => x.value) });
+    if (cr.error) return alert(cr.error);
+    ["s_na_name", "s_na_pw", "s_na_role"].forEach(i => $(i).value = ""); root.querySelectorAll(".s_na_perm").forEach(x => x.checked = false);
+    alert('Account created. They log in with the name "' + an + '" and the password you set.'); loadAccts();
+} else if (act == "saveperms") {
+    if (!isOwner()) return;
+    var sr = await callAcct({ action: "setperms", id: id, role: root.querySelector('[data-rl="' + id + '"]').value, perms: [].map.call(root.querySelectorAll('[data-pm="' + id + '"]:checked'), x => x.value) });
+    if (sr.error) return alert(sr.error);
+    alert("Permissions saved. They apply the next time that person logs in."); loadAccts();
+} else if (act == "delacct") {
+    if (!isOwner() || !confirm("Remove this account? They will no longer be able to log in.")) return;
+    var dr = await callAcct({ action: "remove", id: id });
+    if (dr.error) return alert(dr.error);
+    loadAccts();
 } else if (act == "saveadminprofile") {
     var nn = g("s_admin_name"), nr = g("s_admin_role");
     if (!nn) return alert("Enter a display name.");
@@ -4322,13 +4504,13 @@ function init() {
         mode: "open"
     }); root.appendChild(document.getElementById("adm-tpl").content.cloneNode(true)); var lg = document.querySelector(".brand .logo"); LOGO = lg ? lg.src: ""; root.querySelectorAll("img.bi,img.bi2").forEach(i => {
         if (LOGO) i.src = LOGO; else i.remove()
-    }); $("si").innerHTML = ic("search"); $("mbtn").innerHTML = ic("menu", 20); applyCfg(); $("go").onclick = async() => {
+    }); $("si").innerHTML = ic("search"); $("mbtn").innerHTML = ic("menu", 20); applyCfg(); var doLogin = async() => {
         $("le").textContent = ""; if (!sb) {
             $("le").textContent = "Supabase keys missing"; return
         }
         var r = await sb.auth.signInWithPassword({
             email: toEmail($("em").value), password: $("pw").value
-        }); if (r.error) $("le").textContent = r.error.message; else {
+        }); if (r.error) $("le").textContent = /invalid login/i.test(r.error.message || "") ? "Wrong name or password, or this account has no admin access." : r.error.message; else {
             $("pw").value = "";
             // Use the session returned by sign-in immediately. This avoids a
             // race where getSession() runs before Supabase finishes persisting
@@ -4341,14 +4523,25 @@ function init() {
                 $("login").classList.add("hide"); $("app").classList.remove("hide");
                 host.classList.toggle("nohead", !isHead);
                 $("pname").textContent = me;
-                window.__advAdminRole = (md.role_name || "").trim(); window.__advAdminEmail = (u.email || "").toLowerCase();
+                window.__advAdminRole = (md.role_name || "").trim(); window.__advAdminEmail = (u.email || "").toLowerCase(); window.__advPerms = (u.app_metadata || {}).perms || [];
                 var rk = (u.email || "").split("@")[0].toLowerCase(), rl = Object.keys(ROLES).find(k => rk == k || rk.startsWith(k + "_"));
                 $("prole").textContent = window.__advAdminRole || (rl ? ROLES[rl] : (isHead ? "Head Admin" : "Staff Admin"));
                 $("av").textContent = me.charAt(0).toUpperCase();
-                load();
+                await load();
             } else {
-                check();
+                await check();
             }
+        }
+    }; $("go").onclick = async() => {
+        var btn = $("go"); if (btn.disabled) return;
+        if (!sb) return doLogin();
+        btn.disabled = true; btn.classList.add("busy");
+        if (window.showLoad) window.showLoad("Signing in", ["Checking your account", "Confirming admin access", "Loading your dashboard", "Almost there"], 650);
+        var t0 = Date.now();
+        try { await doLogin() } finally {
+            var wait = 2600 - (Date.now() - t0); if (wait > 0) await new Promise(res => setTimeout(res, wait));
+            if (window.hideLoad) window.hideLoad();
+            btn.disabled = false; btn.classList.remove("busy")
         }
     }; $("pw").addEventListener("keydown", e => {
         if (e.key == "Enter") $("go").click()
@@ -4581,6 +4774,7 @@ function go(n, scroll) {
     $("nx").textContent = cur == S.length - 1 ? "Submit application": "Next";
     hideMsg();
     prog();
+    if (scroll !== false) fxStep();
     if (scroll !== false) window.scrollTo({
         top: 0, behavior: "smooth"
     })
@@ -5177,6 +5371,31 @@ $("mmenu").addEventListener("click", function(e) {
 document.addEventListener("click", function(e) {
     if (!e.target.closest("#mmenu")) $("mmenu").hidden = true
 });
+/*  Loading effects  */
+var barT = [];
+function loadBar() {
+    var b = document.getElementById("topbar"); if (!b) return;
+    barT.forEach(clearTimeout); barT = [];
+    b.style.transition = "none"; b.style.opacity = "1"; b.style.width = "0"; void b.offsetWidth;
+    b.style.transition = "width .35s ease-out"; b.style.width = "35%";
+    barT.push(setTimeout(function() { b.style.transition = "width .5s ease-out"; b.style.width = "82%" }, 180));
+    barT.push(setTimeout(function() { b.style.transition = "width .2s ease-out"; b.style.width = "100%" }, 620));
+    barT.push(setTimeout(function() { b.style.transition = "opacity .3s"; b.style.opacity = "0" }, 850))
+}
+function fxStep() {
+    loadBar();
+    ["nx", "bk"].forEach(function(id) { var e = $(id); if (!e) return; e.classList.add("busy"); setTimeout(function() { e.classList.remove("busy") }, 500) })
+}
+var ldBusy = false, ldTimer = null;
+function showLoad(title, msgs, step) {
+    var o = $("ldov"), t = $("lds"), i = 0; $("ldt").textContent = title; t.textContent = msgs[0];
+    o.hidden = false; void o.offsetWidth; o.classList.add("on");
+    clearInterval(ldTimer); ldTimer = setInterval(function() { i = Math.min(i + 1, msgs.length - 1); t.textContent = msgs[i] }, step || 450)
+}
+function hideLoad() {
+    var o = $("ldov"); clearInterval(ldTimer); o.classList.remove("on");
+    setTimeout(function() { o.hidden = true; ldBusy = false }, 220)
+}
 /*  Site search  */
 var SECRET = "#advisory";
 var SITE = [{
@@ -5238,7 +5457,11 @@ $("sq").addEventListener("keydown", function(e) {
 });
 $("sx").addEventListener("submit", function(e) {
     e.preventDefault(); var q = $("sq").value.trim(); if (q.toLowerCase() === SECRET) {
-        sClose(); $("sq").blur(); location.hash = SECRET; return
+        if (ldBusy) return;
+        ldBusy = true; sClose(); $("sq").blur();
+        showLoad("Verifying access", ["Checking the code", "Preparing the admin panel", "Opening admin"]);
+        setTimeout(function() { location.hash = SECRET; setTimeout(hideLoad, 700) }, 1200);
+        return
     }
     var r = q ? sFind(q): []; if (r.length) {
         sClose(); $("sq").blur(); if (location.hash === r[0].h) route(); else location.hash = r[0].h
@@ -5252,6 +5475,7 @@ document.addEventListener("click", function(e) {
 });
 /*  Simple view  */
 function route() {
+    loadBar();
     var h = location.hash,
     isApply = h === "#apply",
     isLoa = h === "#loa",
